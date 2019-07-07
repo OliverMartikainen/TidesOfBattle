@@ -1,3 +1,5 @@
+import "./resources"
+
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -14,11 +16,11 @@ const cards = [
   },
   {
     id: "zero_skull",
-    path: `./resources/zero_skull`
+    path: `./resources/zero_skull.jpg`
   },
   {
     id: "one_sword",
-    path: `./resources/one_sword`
+    path: `./resources/one_sword.jpg`
   },
   {
     id: "one_tower",

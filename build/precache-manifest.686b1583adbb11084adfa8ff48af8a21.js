@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "adffe72d05b933332b430cb2fe548a93",
+    "revision": "421a0baec6c9bba66075625c6d1f3265",
     "url": "/index.html"
   },
   {
-    "revision": "a8929cf702e271e67a92",
+    "revision": "61b59cd72023c949dc88",
     "url": "/static/css/main.e88b7dc2.chunk.css"
   },
   {
@@ -12,11 +12,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/js/2.0155141d.chunk.js"
   },
   {
-    "revision": "a8929cf702e271e67a92",
-    "url": "/static/js/main.1b0adb3a.chunk.js"
+    "revision": "61b59cd72023c949dc88",
+    "url": "/static/js/main.b811c8f5.chunk.js"
   },
   {
     "revision": "42ac5946195a7306e2a5",
     "url": "/static/js/runtime~main.a8a9905a.js"
+  },
+  {
+    "revision": "9b0620310b508737151212d4a05fce26",
+    "url": "/static/media/one_sword.9b062031.jpg"
   }
 ]);
