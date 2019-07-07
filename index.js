@@ -1,3 +1,4 @@
+
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -7,17 +8,17 @@ const cors = require ('cors')
 app.use(cors())
 
 
-const zero_skull = new Card('./resources/zero_skull')
-const zero = new Card('./resources/zero')
-const one_sword = new Card('./resources/one_sword')
-const one_tower = new Card('./resources/one_tower')
-const two = new Card('./resources/two')
-const three = new Card('./resources/three')
+const zero = '<img src="./resources/zero" width="200" height="400"></img>'
+const zero_skull = '<img src="./resources/zero_skull" width="200" height="400"></img>'
+const one_sword = '<img src="./resources/one_sword" width="200" height="400"></img>'
+const one_tower = '<img src="./resources/one_tower" width="200" height="400"></img>'
+const two = '<img src="./resources/two" width="200" height="400"></img>'
+const three = '<img src="./resources/three" width="200" height="400"></img>'
 
 
 
 app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>')
+  res.send('<h1>Helflo World!</h1>')
 })
 
 app.get('/zero', (req, response) => {
