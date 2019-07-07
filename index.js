@@ -34,9 +34,15 @@ const cards = [
   }
 ]
 
-'<img src="./resources/zero_skull" width="200" height="400"></img>'
 
-
+app.get('/', (req, response) => {
+  if(cards) {
+    response.json(cards)
+  }
+  else {
+    response.status(404).end()
+  }
+})
 
 app.get('/cards', (req, response) => {
   if (cards) {
