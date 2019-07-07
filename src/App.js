@@ -3,9 +3,12 @@ import cardServices from './services/cards'
 import './App.css'
 
 const Card = ({ card }) => {
-  return (
-    <img source={card} heigth="200" width="200" />
-  )
+  if (card) {
+    return (
+      <img source={card.path} heigth="200" width="200" />
+    )
+  }
+  return <p>Shit</p>
 }
 
 const giveRandomNumb = () => {
@@ -41,7 +44,7 @@ const App = () => {
       })
   }, [])
 
-  const crawCard = () => {
+  const drawCard = () => {
     const draw = giveRandomNumb()
     setCard(cards.find(card => card.id === draw))
   }

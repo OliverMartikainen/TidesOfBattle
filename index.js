@@ -1,3 +1,6 @@
+import ReactDOM from 'react-dom'
+import React from 'react'
+import App from './src/App'
 
 const express = require('express')
 const app = express()
@@ -6,6 +9,7 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 const cors = require('cors')
 app.use(cors())
+app.use(express.static('build'))
 
 const cards = [
   {
@@ -36,9 +40,7 @@ const cards = [
 
 '<img src="./resources/zero_skull" width="200" height="400"></img>'
 
-app.get('/', (req, res) => {
-  res.send('<h1>Helflo World!</h1>')
-})
+
 
 app.get('/cards', (req, response) => {
   if (cards) {
@@ -64,4 +66,3 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-
