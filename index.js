@@ -14,27 +14,27 @@ app.use(express.static('build'))
 const cards = [
   {
     id: "zero",
-    path: "./resources/zero"
+    path: "/resources/zero.jpg"
   },
   {
     id: "zero_skull",
-    path: `./resources/zero_skull.jpg`
+    path: `/resources/zero_skull.jpg`
   },
   {
     id: "one_sword",
-    path: `./resources/one_sword.jpg`
+    path: `/resources/one_sword.jpg`
   },
   {
     id: "one_tower",
-    path: `./resources/one_tower.jpg`
+    path: `/resources/one_tower.jpg`
   },
   {
     id: "two",
-    path: `./resources/two.jpg`
+    path: `/resources/two.jpg`
   },
   {
     id: "three",
-    path: `./resources/three.jpg`
+    path: `/resources/three.jpg`
   }
 ]
 
