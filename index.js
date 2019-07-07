@@ -1,5 +1,3 @@
-import "./resources"
-
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -24,15 +22,15 @@ const cards = [
   },
   {
     id: "one_tower",
-    path: `./resources/one_tower`
+    path: `./resources/one_tower.jpg`
   },
   {
     id: "two",
-    path: `./resources/two`
+    path: `./resources/two.jpg`
   },
   {
     id: "three",
-    path: `./resources/three`
+    path: `./resources/three.jpg`
   }
 ]
 
