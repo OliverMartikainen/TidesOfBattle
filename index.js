@@ -1,10 +1,14 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const fs = require('fs')
 
 app.use(bodyParser.json())
 const cors = require('cors')
 app.use(cors())
+var publicDir = require('path').join(__dirname,'/public');
+app.use(express.static(publicDir));
+
 app.use(express.static('build'))
 
 const cards = [
@@ -36,12 +40,7 @@ const cards = [
 
 
 app.get('/', (req, response) => {
-  if(cards) {
-    response.json(cards)
-  }
-  else {
-    response.status(404).end()
-  }
+  response.send("shits hit shit")
 })
 
 app.get('/cards', (req, response) => {
@@ -54,6 +53,8 @@ app.get('/cards', (req, response) => {
 })
 
 app.get('/cards/:id', (req, response) => {
+  console.log("shitshithsit")
+
   if (cards) {
     const id = req.params.id
     const card = cards.find(card => card.id === id)
@@ -63,6 +64,7 @@ app.get('/cards/:id', (req, response) => {
     response.status(404).end()
   }
 })
+
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
