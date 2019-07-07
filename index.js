@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 const cors = require ('cors')
 app.use(cors())
-app.use(express.static('build'))
+
 
 const zero_skull = new Card('./resources/zero_skull')
 const zero = new Card('./resources/zero')
