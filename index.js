@@ -1,7 +1,3 @@
-import ReactDOM from 'react-dom'
-import React from 'react'
-import App from './src/App'
-
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
