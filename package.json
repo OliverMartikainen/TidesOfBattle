@@ -12,12 +12,15 @@
   "author": "Oliver Martikainen",
   "license": "ISC",
   "dependencies": {
+    "compression": "^1.7.4",
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "fs": "0.0.1-security",
-    "path": "^0.12.7"
+    "express-async-errors": "^3.1.1"
   },
   "devDependencies": {
-    "nodemon": "^1.19.1"
+    "cross-env": "^7.0.3",
+    "eslint": "^7.30.0",
+    "nodemon": "^2.0.11"
   }
 }
