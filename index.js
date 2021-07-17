@@ -2,6 +2,10 @@ const express = require('express')
 const cors = require('cors')
 const compression = require('compression')
 
+
+const cardRouter = require('./controllers/cards')
+const CardPack = require('./models/CardPack')
+
 const app = express()
 
 
@@ -11,7 +15,7 @@ const shouldCompress = (req, res) => {
     }
     /* with this the SSE route of /eventSubscriptions will not use gzip compression.
   Frontend doesnt understand gzip EventSource messages atm, no real reason to implement it either. */
-    if (req.url === '/eventSubscription') return false
+    if (req.url === '/cards/sse') return false
 
     return compression.filter(req, res)
 }
@@ -24,7 +28,7 @@ app.use(compression({
 }))
 
 app.use(express.static('build'))
-
+app.use(cardRouter)
 
 app.get('/', (req, response) => {
     response.send('shits hit shit')
