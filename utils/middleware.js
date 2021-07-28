@@ -8,7 +8,7 @@ const tokenExtractor = (request, response, next) => {
     next()
 }
 
-const EXEMPT_API_PATHS = ['/api/cards/sse', '/api/users/login']
+const EXEMPT_API_PATHS = ['/api/cards/sse', '/api/users/login', '/api/users/usernames']
 
 /**
  * Validates requests token & checks if request url route requires token
@@ -19,7 +19,8 @@ const requestTokenValidator = (request, response, next) => {
     //check if url is one that needs a token --> /api but not explicitly exempt
     if (url.includes('/api') && !EXEMPT_API_PATHS.includes(url)) {
         if(!request.token) {
-            response.status.send({ error: 'token missing'})
+            console.log(url)
+            response.status(401).send({ error: 'token missing'})
             return
         }
 

@@ -17,7 +17,7 @@ const shouldCompress = (req, res) => {
     }
     /* with this the SSE route of /eventSubscriptions will not use gzip compression.
   Frontend doesnt understand gzip EventSource messages atm, no real reason to implement it either. */
-    if (req.url === '/cards/sse') return false
+    if (req.url === '/api/cards/sse') return false
 
     return compression.filter(req, res)
 }

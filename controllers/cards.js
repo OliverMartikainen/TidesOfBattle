@@ -18,39 +18,39 @@ const endCardSet = async (app) => {
 const checkForEnd = async (app) => {
     console.log('end check')
     console.time('check')
-    const [allCards, allUsers] = await Promise.all([cards.getCards(), users.getUsers()]) 
+    const [allCards, allUsers] = await Promise.all([cards.getCards(), users.getUsers()])
     const userCards = allCards.filter(card => card.cardOwner !== '')
 
-    if(userCards.length === 2) {
+    if (userCards.length === 2) {
         //check if user who played has swords
         let swordUserPresent = false
         let swordUserName = ''
         userCards.forEach(card => {
             const username = card.cardOwner
             const user = allUsers.find(user => user.username === username)
-            if(user.hasSword) {
+            if (user.hasSword) {
                 swordUserPresent = true
                 swordUserName = username
             }
         })
 
-        if(swordUserPresent) {
+        if (swordUserPresent) {
             app.emit(SSE_EMMITTER, { msg: 'waiting-sword', username: swordUserName })
         } else {
-            endCardSet(app)         
+            endCardSet(app)
         }
         console.timeEnd('check')
 
         return
     }
 
-    if(userCards.length >= 3) {
+    if (userCards.length >= 3) {
         const uniqueNames = userCards.reduce((obj, card) => {
             obj[card.cardOwner] = card.cardOwner
             return obj
         }, {})
         const uniqueCount = Object.keys(uniqueNames).length
-        if(uniqueCount >= 3) {
+        if (uniqueCount >= 3) {
             app.emit(SSE_EMMITTER, { msg: 'too-many-users', usernames: Object.keys(uniqueNames) })
         }
 
@@ -65,12 +65,15 @@ const checkForEnd = async (app) => {
 
 
 cardRouter.post('/select', async (req, res) => {
-    const { username, cardIndex } = req.body
+    const { cardIndex } = req.body
     //check username is valid? who cares, app used by friends only
+
+    // @ts-ignore - added to req in middleware
+    const username = req.username
 
     //check from mongo if reserved --> then mark as reserved
     const card = await cards.selectCard(cardIndex, username)
-    if(!card) {
+    if (!card) {
         res.status(400).send('Invalid card')
         return
     }
@@ -84,18 +87,20 @@ cardRouter.post('/select', async (req, res) => {
 })
 
 
-cardRouter.get('/forceEnd/:username', async (req, res) => {
-    const username = req.params.username
-    
+cardRouter.get('/forceEnd', async (req, res) => {
+    // @ts-ignore - added to req in middleware
+    const username = req.username
+
     res.app.emit(SSE_EMMITTER, { msg: 'forceEnd', username })
     endCardSet(res)
     res.status(204).send()
 })
 
-cardRouter.get('/nosword/:username', async (req, res) => {
-    const username = req.params.username
+cardRouter.get('/nosword', async (req, res) => {
+    // @ts-ignore - added to req in middleware
+    const username = req.username
 
-    if(!await users.isSwordUser(username)) {
+    if (!await users.isSwordUser(username)) {
         res.status(401).send('You are not the sword user')
         return
     }
@@ -106,7 +111,19 @@ cardRouter.get('/nosword/:username', async (req, res) => {
     res.status(204).send()
 })
 
+cardRouter.get('/selectedCards', async (req, res) => {
+    // @ts-ignore - added to req in middleware
+    const username = req.username
 
+    const selectedCards = await cards.getSelectedCards(username)
+    if(!selectedCards) {
+        return res.status(200).send({ isSelecteds: false })
+    }
+
+    return res.status(200).send({ isSelecteds: true, ...selectedCards })
+})
+
+//exempt from token
 cardRouter.get('/sse', async (req, res) => {
     console.log(`CARDSSE SUB GAIN: ${req.ip} - LISTENER COUNT: ${res.app.listenerCount(SSE_EMMITTER) + 1}`)
 

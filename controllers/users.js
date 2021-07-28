@@ -3,8 +3,8 @@ const users = require('../cache/users')
 const { SSE_EMMITTER } = require('../utils/config')
 const tokenManager = require('../utils/tokenManager')
 
-
-userRouter.get('/', async (req, res) => {
+//exempt from token
+userRouter.get('/usernames', async (req, res) => {
     const allUsers = await users.getUsers()
     const usernames = allUsers.map(user => user.username)
     res.status(200).send(usernames)
@@ -15,7 +15,7 @@ userRouter.get('/stats', async (req, res) => {
     res.status(200).send(allUsers)
 })
 
-userRouter.post('/', async (req, res) => {
+userRouter.post('/add', async (req, res) => {
     const username = req.body.username
     const isDone = await users.addUser(username)
     if (!isDone) {
@@ -24,15 +24,19 @@ userRouter.post('/', async (req, res) => {
     return res.status(204).send()
 })
 
-userRouter.get('/changeSwordUser/:username', async (req, res) => {
-    const username = req.params.username
+userRouter.post('/changeSwordUser', async (req, res) => {
+    // @ts-ignore - added to req in middleware
+    const username = req.username //posters username
 
-    await users.updateSwordUser(username)
+    const newSwordUser = req.body.newSwordUser
 
-    res.emit(SSE_EMMITTER, { msg: 'sword-change', username })
+    await users.updateSwordUser(newSwordUser)
+
+    res.emit(SSE_EMMITTER, { msg: 'sword-change', username: newSwordUser, doneBy: username })
     res.status(204).send()
 })
 
+//exempt from token
 userRouter.post('/login', async (req, res) => {
     //atm this just gives a token used to limit random crawlers from accessing the other endpoints
     const username = req.body.username

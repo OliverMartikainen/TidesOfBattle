@@ -62,8 +62,23 @@ const getCards = async () => {
     return allCards.map(card => card.toJSON())
 }
 
+const getSelectedCards = async (username) => {
+    const allCards = await getCards()
+
+    const selectedCards = allCards.filter(c => c.cardOwner !== '')
+    if(selectedCards.length === 0) return null
+
+    const ownCards = selectedCards.filter(c => c.cardOwner === username)
+    const othersCards = selectedCards.filter(c => c.cardOwner !== username).map(c => ({
+        ...c,
+        cardName: ''
+    }))
+    return { ownCards, othersCards }
+}
+
 module.exports = {
     initCards,
     selectCard,
-    getCards
+    getCards,
+    getSelectedCards
 }
