@@ -1,0 +1,2 @@
+GET http://localhost:3001/api/cards/nosword/AleksiM
+Authorization: bearer eyJhbGciOiJIUzI1NiJ9.T2xpdmVyTQ.4fIWE_1q69-3Aptytr0pdqNS8vVD1cCksoUw0hR0TWU
