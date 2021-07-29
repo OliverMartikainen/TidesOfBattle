@@ -1,3 +1,4 @@
+const card = require('../models/card')
 const Card = require('../models/card')
 
 
@@ -35,7 +36,8 @@ const cardMixer = () => {
 }
 
 const initCards = async () => {
-    Card.collection.drop()
+    //remove previous entries
+    await Card.deleteMany({})
 
     const mixedCards = cardMixer().map((card, index) => ({ cardName: card, cardIndex: index, cardOwner: '' }))
     try {
@@ -57,7 +59,7 @@ const selectCard = async (index, owner) => {
 
 const getCards = async () => {
     const allCards = await Card.find()
-    if(!allCards) return []
+    if (!allCards) return []
 
     return allCards.map(card => card.toJSON())
 }
@@ -66,7 +68,7 @@ const getSelectedCards = async (username) => {
     const allCards = await getCards()
 
     const selectedCards = allCards.filter(c => c.cardOwner !== '')
-    if(selectedCards.length === 0) return null
+    if (selectedCards.length === 0) return { ownCards: [], othersCards: [] }
 
     const ownCards = selectedCards.filter(c => c.cardOwner === username)
     const othersCards = selectedCards.filter(c => c.cardOwner !== username).map(c => ({

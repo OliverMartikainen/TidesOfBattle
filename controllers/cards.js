@@ -79,7 +79,7 @@ cardRouter.post('/select', async (req, res) => {
     }
 
     //send SSE push to others that cardIndex chosen by username
-    res.app.emit(SSE_EMMITTER, { msg: 'select', username, cardIndex })
+    res.app.emit(SSE_EMMITTER, { msg: 'select', cardOwner: username, cardIndex })
 
     //give reserved/not reserved status?? --> return selected cards info
     res.status(200).send(card)
@@ -107,20 +107,16 @@ cardRouter.get('/nosword', async (req, res) => {
 
     res.app.emit(SSE_EMMITTER, { msg: 'nosword', username })
 
-    endCardSet(res)
+    endCardSet(res.app)
     res.status(204).send()
 })
 
-cardRouter.get('/selectedCards', async (req, res) => {
+cardRouter.get('/initialLoad', async (req, res) => {
     // @ts-ignore - added to req in middleware
     const username = req.username
 
-    const selectedCards = await cards.getSelectedCards(username)
-    if(!selectedCards) {
-        return res.status(200).send({ isSelecteds: false })
-    }
-
-    return res.status(200).send({ isSelecteds: true, ...selectedCards })
+    const [swordOwner, selectedCards] = await Promise.all([users.getSwordUser(), cards.getSelectedCards(username)])
+    return res.status(200).send({ swordOwner, selectedCards })
 })
 
 //exempt from token

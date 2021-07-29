@@ -27,6 +27,12 @@ const updateSwordUser = async (username) => {
     await User.findOneAndUpdate({ username: username }, { hasSword: true })
 }
 
+const getSwordUser = async () => {
+    const user = await User.findOne({ hasSword: true })
+    const userObj = user.toJSON()
+    return userObj.username
+}
+
 const addUser = async (username) => {
     if(await isUserValid(username)) return null
 
@@ -61,5 +67,6 @@ module.exports = {
     isSwordUser,
     updateUserStats,
     updateSwordUser,
-    addUser
+    addUser,
+    getSwordUser
 }
