@@ -32,7 +32,7 @@ userRouter.post('/changeSwordUser', async (req, res) => {
 
     await users.updateSwordUser(newSwordUser)
 
-    res.emit(SSE_EMMITTER, { msg: 'sword-change', username: newSwordUser, doneBy: username })
+    res.app.emit(SSE_EMMITTER, { msg: 'sword-change', username: newSwordUser, doneBy: username })
     res.status(204).send()
 })
 
@@ -40,7 +40,7 @@ userRouter.post('/changeSwordUser', async (req, res) => {
 userRouter.post('/login', async (req, res) => {
     //atm this just gives a token used to limit random crawlers from accessing the other endpoints
     const username = req.body.username
-    console.log(username)
+
     if (await users.isUserValid(username)) {
         const token = tokenManager.tokenGenerator(username)
         return res.status(200).send({ username, token })
