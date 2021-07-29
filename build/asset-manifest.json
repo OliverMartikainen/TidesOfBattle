@@ -1,27 +1,27 @@
 {
   "files": {
     "main.css": "/static/css/main.51e22b6a.chunk.css",
-    "main.js": "/static/js/main.0fa2c9b2.chunk.js",
-    "main.js.map": "/static/js/main.0fa2c9b2.chunk.js.map",
+    "main.js": "/static/js/main.a2466932.chunk.js",
+    "main.js.map": "/static/js/main.a2466932.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.312c4f98.js",
     "runtime-main.js.map": "/static/js/runtime-main.312c4f98.js.map",
-    "static/js/2.dda1c52f.chunk.js": "/static/js/2.dda1c52f.chunk.js",
-    "static/js/2.dda1c52f.chunk.js.map": "/static/js/2.dda1c52f.chunk.js.map",
+    "static/js/2.30035e3e.chunk.js": "/static/js/2.30035e3e.chunk.js",
+    "static/js/2.30035e3e.chunk.js.map": "/static/js/2.30035e3e.chunk.js.map",
     "index.html": "/index.html",
     "static/css/main.51e22b6a.chunk.css.map": "/static/css/main.51e22b6a.chunk.css.map",
-    "static/js/2.dda1c52f.chunk.js.LICENSE.txt": "/static/js/2.dda1c52f.chunk.js.LICENSE.txt",
-    "static/media/backside.bc07350a.jpg": "/static/media/backside.bc07350a.jpg",
-    "static/media/one_sword.700197e8.jpg": "/static/media/one_sword.700197e8.jpg",
-    "static/media/one_tower.6ae8d412.jpg": "/static/media/one_tower.6ae8d412.jpg",
-    "static/media/three.4ee9cadd.jpg": "/static/media/three.4ee9cadd.jpg",
-    "static/media/two.44ef7bc4.jpg": "/static/media/two.44ef7bc4.jpg",
-    "static/media/zero.da497042.jpg": "/static/media/zero.da497042.jpg",
-    "static/media/zero_skull.e9f10cf5.jpg": "/static/media/zero_skull.e9f10cf5.jpg"
+    "static/js/2.30035e3e.chunk.js.LICENSE.txt": "/static/js/2.30035e3e.chunk.js.LICENSE.txt",
+    "static/media/backside_lite.24c30a04.jpg": "/static/media/backside_lite.24c30a04.jpg",
+    "static/media/one_sword_lite.4871870e.jpg": "/static/media/one_sword_lite.4871870e.jpg",
+    "static/media/one_tower_lite.5422d4d2.jpg": "/static/media/one_tower_lite.5422d4d2.jpg",
+    "static/media/three_lite.0750c14f.jpg": "/static/media/three_lite.0750c14f.jpg",
+    "static/media/two_lite.e588a68b.jpg": "/static/media/two_lite.e588a68b.jpg",
+    "static/media/zero_lite.09307b16.jpg": "/static/media/zero_lite.09307b16.jpg",
+    "static/media/zero_skull_lite.3d9aee36.jpg": "/static/media/zero_skull_lite.3d9aee36.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.312c4f98.js",
-    "static/js/2.dda1c52f.chunk.js",
+    "static/js/2.30035e3e.chunk.js",
     "static/css/main.51e22b6a.chunk.css",
-    "static/js/main.0fa2c9b2.chunk.js"
+    "static/js/main.a2466932.chunk.js"
   ]
 }
