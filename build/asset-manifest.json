@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.ac3c118d.css",
-    "main.js": "/static/js/main.a00ecf86.js",
+    "main.css": "/static/css/main.ca447077.css",
+    "main.js": "/static/js/main.7d8e13e1.js",
     "static/media/mlgHorn.mp3": "/static/media/mlgHorn.05d1c9010d7433f656f2.mp3",
     "static/media/backside_lite.jpg": "/static/media/backside_lite.24c30a049cac26676676.jpg",
     "static/media/one_sword_lite.jpg": "/static/media/one_sword_lite.4871870e65ac12ab0abc.jpg",
@@ -11,11 +11,11 @@
     "static/media/zero_skull_lite.jpg": "/static/media/zero_skull_lite.3d9aee3610558ca234a3.jpg",
     "static/media/two_lite.jpg": "/static/media/two_lite.e588a68babcfae142ede.jpg",
     "index.html": "/index.html",
-    "main.ac3c118d.css.map": "/static/css/main.ac3c118d.css.map",
-    "main.a00ecf86.js.map": "/static/js/main.a00ecf86.js.map"
+    "main.ca447077.css.map": "/static/css/main.ca447077.css.map",
+    "main.7d8e13e1.js.map": "/static/js/main.7d8e13e1.js.map"
   },
   "entrypoints": [
-    "static/css/main.ac3c118d.css",
-    "static/js/main.a00ecf86.js"
+    "static/css/main.ca447077.css",
+    "static/js/main.7d8e13e1.js"
   ]
 }
