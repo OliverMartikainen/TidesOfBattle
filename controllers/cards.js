@@ -10,9 +10,34 @@ const endCardSet = async (app) => {
     cards.initCards() //refresh db cards
     app.emit(SSE_EMMITTER, { msg: 'end', cards: allCards }) //send all card info to frontend
 
-    //update statistics for each player
-    const allPlayerCards = allCards.filter(card => card.cardOwner !== '')
+    try {
 
+
+        //update statistics for each player
+        const allPlayerCards = allCards.filter(card => card.cardOwner !== '')
+
+        const cardsByPlayer = allPlayerCards.reduce((obj, card) => {
+            let ownerCards = obj[card.cardOwner]
+            if (!ownerCards) {
+                ownerCards = []
+            }
+            ownerCards.push(card.cardName)
+            obj[card.cardOwner] = ownerCards
+            return obj
+        }, {})
+
+        const players = Object.keys(cardsByPlayer)
+        players.forEach(name => {
+            const ownCards = cardsByPlayer[name]
+            const otherPlayers = players.filter(n => n !== name)
+            const othersCardsArrs = otherPlayers.map(n => cardsByPlayer[n])
+            const otherCards = [].concat(...othersCardsArrs)
+
+            users.updateUserStats(name, ownCards, otherCards)
+        })
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 const checkForEnd = async (app) => {

@@ -16,10 +16,17 @@ const isSwordUser = async (username) => !!(await User.findOne({ username: userna
 const updateUserStats = async (username, selfCards, againstCards) => {
     const user = await User.findOne({ username: username })
     const userObj = user.toJSON()
+    const stats = userObj.stats
+    const { self, against } = stats
 
-    selfCards.forEach(card => userObj.stats.self[card]++)
-    againstCards.forEach(card => userObj.stats.against[card]++)
-    User.findOneAndUpdate({ username: username }, userObj)
+    selfCards.forEach(card => {
+        self[card] = self[card] + 1
+    })
+    againstCards.forEach(card => {
+        against[card] = against[card] + 1
+    })
+
+    await User.findOneAndUpdate({ username: username }, { stats: stats }, { new: true })
 }
 
 const updateSwordUser = async (username) => {
@@ -34,7 +41,7 @@ const getSwordUser = async () => {
 }
 
 const addUser = async (username) => {
-    if(await isUserValid(username)) return null
+    if (await isUserValid(username)) return null
 
     const user = new User({
         username: username,
@@ -61,6 +68,30 @@ const addUser = async (username) => {
     return await user.save()
 }
 
+const resetStatsForAll = async () => {
+    const users = await getUsers()
+
+    const updatePromises = users.map(user => {
+        const { stats, username } = user
+        const { self, against } = stats
+
+        const selfNew = Object.keys(self).reduce((obj, name) => {
+            obj[name] = 0
+            return obj
+        }, {})
+        const againstNew = Object.keys(against).reduce((obj, name) => {
+            obj[name] = 0
+            return obj
+        }, {})
+        const statsNew = { self: selfNew, against: againstNew }
+
+        const promise = User.findOneAndUpdate({ username: username }, { stats: statsNew }, { new: true })
+        return promise
+    })
+
+    await Promise.all(updatePromises)
+}
+
 module.exports = {
     getUsers,
     isUserValid,
@@ -68,5 +99,6 @@ module.exports = {
     updateUserStats,
     updateSwordUser,
     addUser,
-    getSwordUser
+    getSwordUser,
+    resetStatsForAll
 }

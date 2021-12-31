@@ -49,4 +49,9 @@ userRouter.post('/login', async (req, res) => {
     return res.status(401).send('invalid username')
 })
 
+userRouter.get('/resetStats', async (req, res) => {
+    await users.resetStatsForAll()
+    return res.status(204).send()
+})
+
 module.exports = userRouter
