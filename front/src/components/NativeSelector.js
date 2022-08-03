@@ -1,40 +1,32 @@
-import { makeStyles } from '@material-ui/core/styles'
-import InputLabel from '@material-ui/core/InputLabel'
-import FormControl from '@material-ui/core/FormControl'
-import NativeSelect from '@material-ui/core/NativeSelect'
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-    }
-}))
+import { InputLabel, FormControl, NativeSelect } from '@mui/material'
+
+const formControlStyle = { margin: '2rem', minWidth: 120 }
 
 const NativeSelector = ({ value, valueOptions, label, handleChange, disabled = false }) => {
-    const classes = useStyles()
 
-    const options = valueOptions.map(v => <option key={v} value={v}>{v}</option>)
+    const options = valueOptions.map(v => <option key={ v } value={ v }>{ v }</option>)
 
     const labelLower = label.toLowerCase()
     const htmlFor = `${labelLower}-native-label-placeholder`
 
     return (
         <div>
-            <FormControl className={classes.formControl}>
-                <InputLabel shrink htmlFor={htmlFor}>
-                    {label}
+            <FormControl style={ formControlStyle } >
+                <InputLabel shrink htmlFor={ htmlFor }>
+                    { label }
                 </InputLabel>
                 <NativeSelect
-                    disabled={disabled}
-                    value={value}
-                    onChange={(event) => handleChange(event.target.value)}
-                    inputProps={{
+                    disabled={ disabled }
+                    value={ value }
+                    onChange={ (event) => handleChange(event.target.value) }
+                    inputProps={ {
                         name: labelLower,
                         id: htmlFor,
-                    }}
+                    } }
                 >
-                    <option value={''}>None</option>
-                    {options}
+                    <option value={ '' }>None</option>
+                    { options }
                 </NativeSelect>
             </FormControl>
         </div>
