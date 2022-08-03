@@ -21,13 +21,17 @@ const shouldCompress = (req, res) => {
     return compression.filter(req, res)
 }
 
-mongoose.connect(MONGO_URI, async () => {
+const connectDb = async () => {
     try {
-        console.log('connected to MongoDB')
+        await mongoose.connect(MONGO_URI)
+        console.log('MONGO_DB CONNECTED')
     } catch (error) {
-        console.log('error connecting to MongoDB:', error.message)
+        console.error(error)
     }
-})
+}
+
+connectDb()
+
 
 app.use(express.json())
 app.use(cors())
