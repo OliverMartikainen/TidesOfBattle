@@ -148,12 +148,13 @@ cardRouter.get('/initialLoad', async (req, res) => {
 cardRouter.get('/sse', async (req, res) => {
     console.log(`CARDSSE SUB GAIN: ${req.ip} - LISTENER COUNT: ${res.app.listenerCount(SSE_EMMITTER) + 1}`)
 
+    
     res.status(200).set({
         'connection': 'keep-alive',
         'cache-control': 'no-cache',
         'content-Type': 'text/event-stream'
     })
-
+    
     const eventUpdateListener = (data) => {
         try {
             res.write(`data: ${JSON.stringify(data)}\n\n`)
@@ -162,7 +163,14 @@ cardRouter.get('/sse', async (req, res) => {
         }
     }
 
-    res.app.on(SSE_EMMITTER, eventUpdateListener)
+    if(!req.ip) {
+        console.error('ERROR REQUEST ' + req.ip + ' ' + req.rawHeaders)
+        res.app.removeListener(SSE_EMMITTER, eventUpdateListener)
+    } else {
+        res.app.on(SSE_EMMITTER, eventUpdateListener)
+    }
+
+    
     req.on('close', () => {
         console.log(`CARDSSE SUB LOST: ${req.ip} - LISTENER COUNT: ${res.app.listenerCount(SSE_EMMITTER) - 1}`)
         res.app.removeListener(SSE_EMMITTER, eventUpdateListener)
