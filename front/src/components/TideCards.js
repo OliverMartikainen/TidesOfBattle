@@ -4,6 +4,7 @@ import TideCard from './TideCard'
 import NativeSelector from './NativeSelector'
 import cardsService from 'services/cards'
 import usersService from 'services/users'
+// @ts-ignore
 import mlgHorn from 'resources/mlgHorn.mp3'
 
 // --> improve game end/ new session start 
