@@ -2,10 +2,13 @@ package com.javaserver.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestController //instead of @Controller --> this sets @ResponseBody to each automatically (and some other assumptions done)
+@RequestMapping("/users")
 public class Users {
 
 	@GetMapping("/usernames")
@@ -33,7 +36,7 @@ public class Users {
 	}
 
 	@PostMapping("/changeSwordUser")
-	public String setSwordUser() {
+	public String setSwordUser(/*@RequestBody Book book*/) {
 		//String newSwordUser (username) in body,
 		//update user lists sword holder
 		
@@ -43,6 +46,7 @@ public class Users {
 	}
 
 	@GetMapping("/stats")
+	@ResponseBody //--> Spring Boot expects response body to be json/converts return object into json
 	public String getStats() {
 		//return all user info (frontend will display only the statistics part)
 		return "todo";
@@ -54,5 +58,3 @@ public class Users {
 		return "todo";
 	}
 }
-
-//get /usernames
