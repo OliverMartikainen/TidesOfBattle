@@ -1,11 +1,11 @@
-package com.javaserver.cache;
+package com.javaserver.dbconnect;
 
 import java.util.List;
 
 public class UsersPostgres implements UsersInterface {
 
 	@Override
-	public List<String> getUsers() {
+	public List<String> getUserNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -5,6 +5,7 @@ front/build
 
 #JAVA_BACK SPECIFIC
 application.properties
+*.properties
 
 # dependencies
 */node_modules

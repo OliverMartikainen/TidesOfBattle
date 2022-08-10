@@ -1,6 +1,8 @@
-package com.javaserver.cache;
+package com.javaserver.dbconnect;
 
 import java.util.List;
+
+import com.javaserver.models.Card;
 
 public class CardsMongo implements CardsInterface {
 

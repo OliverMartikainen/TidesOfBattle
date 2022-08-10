@@ -1,8 +1,13 @@
-package com.javaserver.cache;
+package com.javaserver.models;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document("cards")
 public class Card {
-	private String cardName;
+	@Id
 	private Integer cardIndex;
+	private String cardName;
 	private String cardOwner;
 	
 	public Card(String cardName, Integer cardIndex) {

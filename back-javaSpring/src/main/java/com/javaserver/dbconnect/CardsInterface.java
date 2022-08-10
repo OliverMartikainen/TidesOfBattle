@@ -1,9 +1,12 @@
-package com.javaserver.cache;
+package com.javaserver.dbconnect;
 
 import java.util.List;
 
+import com.javaserver.models.Card;
+import com.javaserver.models.CardSet;
+
 public interface CardsInterface {
-	static final CardSet CardSet = new CardSet();
+	public static final CardSet CardSet = new CardSet();
 	
 	public Boolean initCards();
 	

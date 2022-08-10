@@ -17,8 +17,6 @@ public class JwtTokenUtil {
     @Value("${jwt-secret:kjhserlgkjhdfkljghlsdkjfghlkdsjfgh}")
     private String secret;
     
-    
-    //private Algorithm secretAlgo = Algorithm.HMAC256(this.secret);
     private static final String ISSUER = "PERSONAL APPLICATION";
 
     public String generateToken(String username) throws IllegalArgumentException, JWTCreationException {

@@ -6,12 +6,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServletResponse;
 import com.javaserver.security.JwtFilter;
 
@@ -27,68 +32,32 @@ public class SecurityConfiguration {
 			throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
-
+		
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-        .httpBasic().disable()
-        .cors()
-        .and()
-        .authorizeHttpRequests()
-        .antMatchers("/api/users/login").permitAll()
-        .antMatchers("/api/**").denyAll()
-        .and()
-
-        .exceptionHandling()
-            .authenticationEntryPoint(
-                    (request, response, authException) ->
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
-            )
-        .and()
+        // Enable CORS and disable CSRF
+		http.cors().and().csrf().disable().httpBasic().disable();
+		
+		http
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+		http
+        .exceptionHandling()
+        .authenticationEntryPoint(
+            (request, response, authException) -> {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+            }
+        );
+
+        http.antMatcher("/api/**")
+        .authorizeHttpRequests()
+        .antMatchers("/api/users/login").permitAll()
+        .antMatchers("/api/users/usernames").permitAll()
+        .antMatchers("/api/cards/sse").permitAll()
+        .anyRequest().authenticated()
+        .and()
+        .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 }
-
-/*
-
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-
-
-@Configuration
-@EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Autowired private JwtFilter filter;
-
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .httpBasic().disable()
-                .cors()
-                .and()
-                .authorizeHttpRequests()
-                .antMatchers("/api/users/**").permitAll()
-                .antMatchers("/api/cards/**").denyAll()
-                .and()
-
-                .exceptionHandling()
-                    .authenticationEntryPoint(
-                            (request, response, authException) ->
-                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
-                    )
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-
-
-}*/

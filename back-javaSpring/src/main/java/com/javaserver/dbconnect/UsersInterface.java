@@ -1,10 +1,10 @@
-package com.javaserver.cache;
+package com.javaserver.dbconnect;
 
 import java.util.List;
 
 public interface UsersInterface {
 
-	public List<String> getUsers();
+	public List<String> getUserNames();
 	
 	public Boolean isUserValid(String username);
 	

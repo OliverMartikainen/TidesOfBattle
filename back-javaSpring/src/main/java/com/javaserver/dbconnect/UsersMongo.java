@@ -1,13 +1,23 @@
-package com.javaserver.cache;
+package com.javaserver.dbconnect;
 
 import java.util.List;
 
-public class UsersMongo implements UsersInterface {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import com.javaserver.models.User;
+import com.javaserver.repository.ItemRepository;
+
+@Repository
+public class UsersMongo implements UsersInterface  {
+	@Autowired
+	private ItemRepository usersRepo;
+	
 	@Override
-	public List<String> getUsers() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getUserNames() {
+		List<User> users = usersRepo.findAll();
+		return users.stream().map(User::getUsername).toList();
 	}
 
 	@Override

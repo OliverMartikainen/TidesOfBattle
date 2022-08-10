@@ -1,21 +1,23 @@
-package com.javaserver.cache;
+package com.javaserver.models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.javaserver.cache.Card;
+//This class should be used to create new cardstacks called in "controllers/Cards.java" endSet phase
+
 
 public final class CardSet {
-	private static final HashMap<String, Integer> CardSetInfo = new HashMap<>();
-
-	protected CardSet() {
-		CardSetInfo.put("zero", 8);
-		CardSetInfo.put("zero_skull", 2);
-		CardSetInfo.put("one_sword", 4);
-		CardSetInfo.put("one_tower", 4);
-		CardSetInfo.put("two", 4);
-		CardSetInfo.put("three", 2);
+	private static final Map<String, Integer> CardSetInfo = Map.of(
+			"zero", 8,
+			"zero_skull", 2,
+			"one_sword", 4,
+			"one_tower", 4,
+			"two", 4,
+			"three", 2
+		);
+	
+	public CardSet() {
 	}
 
 	public static List<Card> organizedPackCreator() {
@@ -42,6 +44,7 @@ public final class CardSet {
 
 			Card pickedCard = organizedPack.get(randNumbInteger);
 			organizedPack.remove(randNumbInteger);
+			
 			mixedPack.add(new Card(pickedCard.getCardName(), i));
 		}
 

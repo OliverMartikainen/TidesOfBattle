@@ -11,8 +11,10 @@ import mlgHorn from 'resources/mlgHorn.mp3'
 //--> store end result in other property, 
 //show all that until state 'isFrozen' is reset with click? --> ownCards are null anyway
 const sseMsgActions = (data, setCardStates) => {
+    console.log(data)
     try {
         const msgObj = JSON.parse(data)
+        console.log(msgObj)
 
         switch (msgObj.msg) {
             case 'end':

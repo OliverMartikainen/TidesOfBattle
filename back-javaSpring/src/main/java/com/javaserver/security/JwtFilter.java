@@ -1,6 +1,8 @@
 package com.javaserver.security;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,21 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
-
-
-//import com.javaserver.cache.UsersInterface;
-//import com.javaserver.cache.UsersMongo;
-
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-	/*@Autowired
-	private UsersInterface userDetailsService = new UsersMongo();
-	*/@Autowired
+	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
 	@Override
@@ -31,25 +29,32 @@ public class JwtFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		String authHeader = request.getHeader("Authorization");
 
-		if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")) {
-			String jwt = authHeader.substring(7);
+		if (authHeader == null || authHeader.isBlank() || (!authHeader.startsWith("Bearer ") && !authHeader.startsWith("bearer "))) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
-			if (jwt == null || jwt.isBlank()) {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token in Bearer Header");
-			} else {
-				try {
-					String username = jwtTokenUtil.validateTokenAndRetrieveSubject(jwt);
-					/*if (!userDetailsService.isUserValid(username)) {
-						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token username");
+		String jwt = authHeader.substring(7);
 
-					}*/
-						request.setAttribute("username", username);
-					
+		if (jwt == null || jwt.isBlank()) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
-				} catch (JWTVerificationException exc) {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
-				}
-			}
+		try {
+			String username = jwtTokenUtil.validateTokenAndRetrieveSubject(jwt);
+
+			// there is better way, but not the only purpose is to prevent requests without
+			// token to most endpoints.
+			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, "",
+					new ArrayList<>());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+
+			request.setAttribute("username", username);
+
+		} catch (JWTVerificationException exc) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT Token");
+			return;
 		}
 
 		filterChain.doFilter(request, response);
