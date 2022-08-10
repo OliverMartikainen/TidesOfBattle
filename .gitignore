@@ -3,6 +3,9 @@
 # FRONT SPECIFIC
 front/build
 
+#JAVA_BACK SPECIFIC
+application.properties
+
 # dependencies
 */node_modules
 */.pnp
