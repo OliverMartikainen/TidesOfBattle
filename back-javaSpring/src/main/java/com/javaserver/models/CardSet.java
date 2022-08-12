@@ -49,4 +49,16 @@ public final class CardSet {
 
 		return mixedPack;
 	}
+	
+	public static List<Card> getUsersCards(List<Card> cards, String username) {
+		return cards.stream().filter(card -> card.getCardOwner().equals(username)).toList();
+	}
+	
+	public static List<Card> getNotUsersCards(List<Card> cards, String username) {
+		return cards.stream().filter(card -> !card.getCardOwner().equals(username)).toList();
+	}
+	
+	public static List<String> getCardsAsNamesOnly(List<Card> cards) {
+		return cards.stream().map(Card::getCardName).toList();
+	}
 }

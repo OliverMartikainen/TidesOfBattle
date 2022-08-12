@@ -40,10 +40,12 @@ public class Card {
 		this.cardOwner = cardOwner;
 	}
 	
-	public Map<String, Object> getCensoredCardData() {
+	//if this wasnt a static function the return value would be added to JSON object
+	//JSON converter takes everything get..() functions results? IDK. private cardIndexString is not taken
+	public static Map<String, Object> getCensoredCardData(Card card) {
 		return Map.of(
-				"cardIndex", cardIndex,
-				"cardOwner", cardOwner
+				"cardIndex", card.getCardIndex(),
+				"cardOwner", card.getCardOwner()
 				);
 	}
 

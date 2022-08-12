@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.javaserver.dbconnect.CardsMongo;
 import com.javaserver.dbconnect.UsersMongo;
 import com.javaserver.models.Card;
+import com.javaserver.models.CardSet;
 
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -37,6 +38,7 @@ public class Cards {
 	private void endCardSet() {
 		
 		List<Card> oldCards = cardsRepo.getCards();
+		List<Card> cardsWithOwners = cardsRepo.getCardsWithOwners();
 		
 		//mix stored cards info
 		cardsRepo.initCards();
@@ -47,42 +49,19 @@ public class Cards {
 			    "cards", oldCards
 			));
 		
-		//TODO - stats calculation
+
+		//users who had cards
+		List<String> usersnames = cardsWithOwners.stream().map(Card::getCardOwner).toList();
+		List<String> uniqueNames = new ArrayList<>(new HashSet<>(usersnames));
 		
-		
-		
-
-/*
-
-    try {
-
-
-        //update statistics for each player
-        const allPlayerCards = allCards.filter(card => card.cardOwner !== '')
-
-        const cardsByPlayer = allPlayerCards.reduce((obj, card) => {
-            let ownerCards = obj[card.cardOwner]
-            if (!ownerCards) {
-                ownerCards = []
-            }
-            ownerCards.push(card.cardName)
-            obj[card.cardOwner] = ownerCards
-            return obj
-        }, {})
-
-        const players = Object.keys(cardsByPlayer)
-        players.forEach(name => {
-            const ownCards = cardsByPlayer[name]
-            const otherPlayers = players.filter(n => n !== name)
-            const othersCardsArrs = otherPlayers.map(n => cardsByPlayer[n])
-            const otherCards = [].concat(...othersCardsArrs)
-
-            users.updateUserStats(name, ownCards, otherCards)
-        })
-    } catch (error) {
-        console.error(error)
-    }
- */
+		uniqueNames.forEach(name -> {
+			//users own cards
+			usersRepo.updateUserStats(
+					name, 
+					CardSet.getCardsAsNamesOnly(CardSet.getUsersCards(cardsWithOwners, name)), 
+					CardSet.getCardsAsNamesOnly(CardSet.getNotUsersCards(cardsWithOwners, name))
+				);
+		});
 	}
 
 	private void checkForEnd() {
@@ -156,7 +135,7 @@ public class Cards {
 			    "cardIndex", cardIndex
 			));
 		
-		checkForEnd();
+		checkForEnd(); //this happens before user gets their card
 		return ResponseEntity.status(200).body(Map.of("card", selectedCard));
 	}
 
@@ -195,7 +174,7 @@ public class Cards {
 		
 		Map<String, List<Card>> selectedCards = cardsRepo.getSelectedCards(username);
 		
-		List<Map<String, Object>> othersCardsCensored = selectedCards.get("othersCards").stream().map(card -> card.getCensoredCardData()).toList();
+		List<Map<String, Object>> othersCardsCensored = selectedCards.get("othersCards").stream().map(Card::getCensoredCardData).toList();
 		
 		return Map.of(
 			    "swordOwner", usersRepo.getSwordUserName(),

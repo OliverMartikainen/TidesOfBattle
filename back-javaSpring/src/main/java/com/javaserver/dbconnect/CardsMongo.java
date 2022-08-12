@@ -29,7 +29,6 @@ public class CardsMongo implements CardsInterface {
 		if(card == null) return null;
 		
 		if(!card.getCardOwner().equals("")) {
-			System.out.println(card.getCardOwner());
 			return null;
 		}
 		
@@ -40,9 +39,7 @@ public class CardsMongo implements CardsInterface {
 	
 	@Override
 	public Optional<Card> getCard(int index) {
-		Optional<Card> c = cardsRepo.findById(index + "");
-		System.out.println(c + " " + index);
-		return c;
+		return cardsRepo.findById(index + "");
 	}
 
 	@Override

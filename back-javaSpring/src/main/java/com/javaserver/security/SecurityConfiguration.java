@@ -38,9 +38,7 @@ public class SecurityConfiguration {
 		http
         .exceptionHandling()
         .authenticationEntryPoint(
-            (request, response, authException) -> {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-            }
+            (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage())
         );
 
         http.antMatcher("/api/**")
