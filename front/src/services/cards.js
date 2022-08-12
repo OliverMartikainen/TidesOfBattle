@@ -15,7 +15,7 @@ const select = async (cardIndex) => {
         const authHeader = getAuthHeader()
         const res = await axios.post(`${SERVICE_URL}/select`, { cardIndex }, authHeader)
 
-        const card = res.data
+        const card = res.data?.card
 
         return card
     } catch (error) {

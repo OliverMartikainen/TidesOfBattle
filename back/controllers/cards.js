@@ -99,7 +99,7 @@ cardRouter.post('/select', async (req, res) => {
     //check from mongo if reserved --> then mark as reserved
     const card = await cards.selectCard(cardIndex, username)
     if (!card) {
-        res.status(400).send('Invalid card')
+        res.status(400).send({ error: 'Invalid card' })
         return
     }
 
@@ -107,7 +107,7 @@ cardRouter.post('/select', async (req, res) => {
     res.app.emit(SSE_EMMITTER, { msg: 'select', cardOwner: username, cardIndex })
 
     //give reserved/not reserved status?? --> return selected cards info
-    res.status(200).send(card)
+    res.status(200).send({ card: card })
     checkForEnd(res.app)
 })
 
