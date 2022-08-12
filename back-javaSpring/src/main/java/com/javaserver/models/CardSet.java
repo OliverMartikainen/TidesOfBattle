@@ -17,14 +17,14 @@ public final class CardSet {
 			"three", 2
 		);
 	
-	public CardSet() {
+	private CardSet() {
 	}
 
 	public static List<Card> organizedPackCreator() {
 		List<Card> newPack = new ArrayList<>();
 
 		CardSetInfo.forEach((cardName, count) -> {
-			for (Integer i = 0; i < count; i++) {
+			for (int i = 0; i < count; i++) {
 				newPack.add(new Card(cardName, i));
 			}
 		});
@@ -36,14 +36,13 @@ public final class CardSet {
 		List<Card> organizedPack = organizedPackCreator();
 		List<Card> mixedPack = new ArrayList<>();
 
-		Integer maxPackSize = organizedPack.size();
-		for (Integer i = 0; i < maxPackSize; i++) {
+		int maxPackSize = organizedPack.size();
+		for (int i = 0; i < maxPackSize; i++) {
 			// choose randomly 1 card that is still left in pack
-			Long randNumb = Math.round(Math.random() * organizedPack.size());
-			Integer randNumbInteger = randNumb.intValue();
+			Long randNumb = Math.round(Math.random() * (organizedPack.size()-1));
+			int randNumbInteger = randNumb.intValue();
 
-			Card pickedCard = organizedPack.get(randNumbInteger);
-			organizedPack.remove(randNumbInteger);
+			Card pickedCard = organizedPack.remove(randNumbInteger);
 			
 			mixedPack.add(new Card(pickedCard.getCardName(), i));
 		}

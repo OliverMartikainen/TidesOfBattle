@@ -2,13 +2,28 @@ package com.javaserver.dbconnect;
 
 import java.util.List;
 
+import com.javaserver.models.User;
+
 public class UsersPostgres implements UsersInterface {
 
+	@Override
+	public List<User> getUsers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public List<String> getUserNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public User getUser(String username) throws NullPointerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	@Override
 	public Boolean isUserValid(String username) {
@@ -35,7 +50,7 @@ public class UsersPostgres implements UsersInterface {
 	}
 
 	@Override
-	public String getSwordUser() {
+	public User getSwordUser() throws NullPointerException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -50,6 +65,12 @@ public class UsersPostgres implements UsersInterface {
 	public void resetStatsForAll() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public String getSwordUserName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

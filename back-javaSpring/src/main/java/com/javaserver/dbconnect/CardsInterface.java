@@ -1,18 +1,24 @@
 package com.javaserver.dbconnect;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.javaserver.models.Card;
-import com.javaserver.models.CardSet;
 
 public interface CardsInterface {
-	public static final CardSet CardSet = new CardSet();
 	
-	public Boolean initCards();
+	public List<Card> initCards();
 	
-	public Card selectCard(Integer index, String owner);
+	public Card selectCard(int index, String owner);
+	
+	public Optional<Card> getCard(int index);
 	
 	public List<Card> getCards();
 	
-	public List<Card> getSelectedCards(String owner);
+	public List<Card> getCardsWithOwners();
+	
+	public List<String> getCardOwnerNames();
+	
+	public Map<String, List<Card>> getSelectedCards(String owner);
 }

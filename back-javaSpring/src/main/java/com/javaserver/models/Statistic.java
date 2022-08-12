@@ -1,58 +1,42 @@
 package com.javaserver.models;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Statistic {
-	private Number zero = 0;
-	private Number zero_skull = 0;
-	private Number one_sword = 0;
-	private Number one_tower = 0;
-	private Number two = 0;
-	private Number three = 0;
+	private Map<String, Integer> stats = new HashMap<>();
 	
-	public Number getZero() {
-		return zero;
+	Statistic() {
+		stats.put("zero", 0);
+		stats.put("zero_skill", 0);
+		stats.put("one_sword", 0);
+		stats.put("one_tower", 0);
+		stats.put("two", 0);
+		stats.put("three", 0);
 	}
+	
 
-	public void setZero(Number zero) {
-		this.zero = zero;
+	public int getCardCount(String cardName) throws NullPointerException {
+		return stats.get(cardName);
 	}
-
-	public Number getZero_skull() {
-		return zero_skull;
+	
+	public Map<String, Integer> getAllStats() {
+		return stats;
 	}
-
-	public void setZero_skull(Number zero_skull) {
-		this.zero_skull = zero_skull;
+	
+	
+	public void updateStats(List<String> cards) {
+		cards.forEach(this::updateSingleStat);
 	}
-
-	public Number getOne_sword() {
-		return one_sword;
-	}
-
-	public void setOne_sword(Number one_sword) {
-		this.one_sword = one_sword;
-	}
-
-	public Number getOne_tower() {
-		return one_tower;
-	}
-
-	public void setOne_tower(Number one_tower) {
-		this.one_tower = one_tower;
-	}
-
-	public Number getTwo() {
-		return two;
-	}
-
-	public void setTwo(Number two) {
-		this.two = two;
-	}
-
-	public Number getThree() {
-		return three;
-	}
-
-	public void setThree(Number three) {
-		this.three = three;
+	
+	public void updateSingleStat(String cardName) {
+		try {
+			int oldCount = stats.get(cardName);			
+			stats.replace(cardName, oldCount + 1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
 	}
 }

@@ -14,17 +14,22 @@ import java.util.Date;
 @Component
 public class JwtTokenUtil {
 
-    @Value("${jwt-secret:kjhserlgkjhdfkljghlsdkjfghlkdsjfgh}")
+    @Value("${jwt-secret}")
     private String secret;
     
     private static final String ISSUER = "PERSONAL APPLICATION";
 
     public String generateToken(String username) throws IllegalArgumentException, JWTCreationException {
+    	long twoDaysMsec = (2 * 24 * 60 * 60 * 1000L);
+    	Date dateNow = new Date();
+    	Date dateExpiration = new Date((dateNow.getTime() + twoDaysMsec));
+    	
         return JWT.create()
                 .withSubject("User Details")
                 .withClaim("username", username)
                 .withClaim("creationTime", System.currentTimeMillis())
                 .withIssuedAt(new Date())
+                .withExpiresAt(dateExpiration)
                 .withIssuer(ISSUER)
                 .sign(Algorithm.HMAC256(this.secret));
     }

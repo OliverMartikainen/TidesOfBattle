@@ -2,9 +2,15 @@ package com.javaserver.dbconnect;
 
 import java.util.List;
 
+import com.javaserver.models.User;
+
 public interface UsersInterface {
 
+	public List<User> getUsers();
+	
 	public List<String> getUserNames();
+	
+	public User getUser(String username) throws NullPointerException;
 	
 	public Boolean isUserValid(String username);
 	
@@ -14,7 +20,9 @@ public interface UsersInterface {
 	
 	public void updateSwordUser(String username);
 	
-	public String getSwordUser();
+	public User getSwordUser() throws NullPointerException;
+	
+	public String getSwordUserName();
 	
 	public void addUser(String username);
 	

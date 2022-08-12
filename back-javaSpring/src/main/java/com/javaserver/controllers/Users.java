@@ -1,12 +1,11 @@
 package com.javaserver.controllers;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.javaserver.dbconnect.UsersInterface;
 import com.javaserver.dbconnect.UsersMongo;
+import com.javaserver.models.User;
 import com.javaserver.security.JwtTokenUtil;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -26,78 +25,81 @@ import com.javaserver.security.JwtTokenUtil;
 public class Users {
 	
 	@Autowired
-	private Sse sseEmitter = new Sse();
+	private Sse sseEmitter;
 	
 	@Autowired
-	private UsersMongo userRepo;
+	private UsersMongo usersRepo;
 	
 	@Autowired
 	private JwtTokenUtil jwtUtil;
-	private UsersInterface userCache = new UsersMongo();
-
+	
+	private static final String USERNAME = "username";
+	private static final String ERROR = "error";
+	
 	@GetMapping("/usernames")
 	public List<String> getUsernames() {
-		return userRepo.getUserNames();
-	}
-
-	@GetMapping("/login")
-	public String loginG() {
-		return "LOGGED IN";
+		return usersRepo.getUserNames();
 	}
 
 	@PostMapping("/login")
-	public Map<String, String> login(@RequestBody Map<String, String> body) {
-		
-		String username = body.get("username");
-		// atm this just gives a token used to limit random crawlers from accessing the
-		// other endpoints
-		// for that reason its POST instead of GET
+	public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> body) {
+		String username = body.get(USERNAME);
 
-		// gets String username in body, checks if its valid, creates JWT token &
-
-		if (Boolean.FALSE.equals(userCache.isUserValid(username))) {
-			return Collections.singletonMap("error", "INVALID USERNAME");
+		if (Boolean.FALSE.equals(usersRepo.isUserValid(username))) {
+			return ResponseEntity.status(401).body(Map.of(ERROR, "INVALID USERNAME"));
 		}
-
 		
 		// Generating JWT
 		String token = jwtUtil.generateToken(username);
 		
-		return Map.of(
+		return ResponseEntity.status(200).body(Map.of(
 			    "token", token,
-			    "username", username
-			);
+			    USERNAME, username
+			));
 	}
 
 	@PostMapping("/add")
-	public String addUser() {
-		// String username in body, add it to users db
-		// return 400 if user exists already, 204 if added
+	public ResponseEntity<Map<String, String>> addUser(@RequestBody Map<String, String> body) {
+		String username = body.get(USERNAME);
 
-		return "todo";
+		if(Boolean.TRUE.equals(usersRepo.isUserValid(username))) {
+			return ResponseEntity.status(400).body(Map.of(ERROR, "USERNAME ALREADY EXISTS"));
+		}
+		
+		usersRepo.addUser(username);
+
+		return ResponseEntity.status(204).body(null);
 	}
 
 	@PostMapping("/changeSwordUser")
-	public String setSwordUser(/* @RequestBody Book book */) {
-		// String newSwordUser (username) in body,
-		// update user lists sword holder
+	public ResponseEntity<Object> setSwordUser(Authentication authentication, @RequestBody Map<String, String> body) {
+		String newSwordUsername = body.get(USERNAME);
+		
+		if(Boolean.FALSE.equals(usersRepo.isUserValid(newSwordUsername))) {
+			return ResponseEntity.status(400).body(Map.of(ERROR, "INVALID USERNAME"));
+		}
 
-		// emit SSE msg { msg: 'sword-change', username: newSwordUser, doneBy: username
-		// } --> doneby username who did request
-		// return status 204
-		return "todo";
+		usersRepo.updateSwordUser(newSwordUsername);
+				
+		sseEmitter.emitSseData(Map.of(
+			    "msg", "sword-change",
+			    USERNAME, newSwordUsername,
+			    "doneBy", authentication.getName()
+			));
+		
+		return ResponseEntity.status(204).body(null);
 	}
 
 	@ResponseBody // --> Spring Boot expects response body to be json/converts return object into
 	@GetMapping("/stats")
-	public String getStats() {
-		// return all user info (frontend will display only the statistics part)
-		return "todo";
+	public List<User> getStats() {	
+		return usersRepo.getUsers();
 	}
 
 	@GetMapping("/resetStats")
-	public String resetStats() {
-		// reset all user stats, return 204
-		return "todo";
+	public ResponseEntity<Object> resetStats() {
+
+		usersRepo.resetStatsForAll();
+		return ResponseEntity.status(204).body(null);
 	}
 }

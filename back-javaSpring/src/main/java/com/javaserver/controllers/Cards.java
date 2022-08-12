@@ -1,9 +1,13 @@
 package com.javaserver.controllers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,22 +15,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.javaserver.dbconnect.CardsMongo;
+import com.javaserver.dbconnect.UsersMongo;
+import com.javaserver.models.Card;
+
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/cards")
 public class Cards {
 	@Autowired
-	private Sse sseEmitter = new Sse();
+	private Sse sseEmitter;
+	
+	@Autowired
+	private UsersMongo usersRepo;
+	
+	@Autowired
+	private CardsMongo cardsRepo;
 	
 
 	private void endCardSet() {
-		//app.emit(SSE_EMMITTER, { msg: 'end', cards: allCards }) //send all card info to frontend
+		
+		List<Card> oldCards = cardsRepo.getCards();
+		
+		//mix stored cards info
+		cardsRepo.initCards();
+		
+		//send all old info to frontends
+		sseEmitter.emitSseData(Map.of(
+			    "msg", "end",
+			    "cards", oldCards
+			));
+		
+		//TODO - stats calculation
+		
+		
+		
+
 /*
- *     console.log('end cards')
-    const allCards = await cards.getCards()
-    cards.initCards() //refresh db cards
-    app.emit(SSE_EMMITTER, { msg: 'end', cards: allCards }) //send all card info to frontend
 
     try {
 
@@ -60,74 +86,69 @@ public class Cards {
 	}
 
 	private void checkForEnd() {
-/*
- *   console.log('end check')
-    console.time('check')
-    const [allCards, allUsers] = await Promise.all([cards.getCards(), users.getUsers()])
-    const userCards = allCards.filter(card => card.cardOwner !== '')
-
-    if (userCards.length === 2) {
-        //check if user who played has swords
-        let swordUserPresent = false
-        let swordUserName = ''
-        userCards.forEach(card => {
-            const username = card.cardOwner
-            const user = allUsers.find(user => user.username === username)
-            if (user.hasSword) {
-                swordUserPresent = true
-                swordUserName = username
-            }
-        })
-
-        if (swordUserPresent) {
-            app.emit(SSE_EMMITTER, { msg: 'waiting-sword', username: swordUserName })
-        } else {
-            endCardSet(app)
-        }
-        console.timeEnd('check')
-
-        return
-    }
-
-    if (userCards.length >= 3) {
-        const uniqueNames = userCards.reduce((obj, card) => {
-            obj[card.cardOwner] = card.cardOwner
-            return obj
-        }, {})
-        const uniqueCount = Object.keys(uniqueNames).length
-        if (uniqueCount >= 3) {
-            app.emit(SSE_EMMITTER, { msg: 'too-many-users', usernames: Object.keys(uniqueNames) })
-        }
-
-        endCardSet(app)
-        console.timeEnd('check')
-
-        return
-    }
-    console.timeEnd('check')
- * 
- */
+		
+		List<Card> ownedCards = cardsRepo.getCardsWithOwners();
+		String swordUser = usersRepo.getSwordUserName();
+		
+		//if less than 2 cards selected, keep playing.
+		
+		if(ownedCards.size() == 2) {
+			Boolean swordUserPlaying = cardsRepo.getCardOwnerNames().contains(swordUser);
+			
+			if(Boolean.TRUE.equals(swordUserPlaying)) {
+				//we need sword user to decide if they play 3rd card or not (so select card or press "nosword"
+				sseEmitter.emitSseData(Map.of(
+					    "msg", "waiting-sword",
+					    "username", swordUser
+					));
+				
+			} else {
+				endCardSet();
+			}
+			
+		
+		}
+		
+		else if(ownedCards.size() == 3) {
+			List<String> cardOwnersNames = cardsRepo.getCardOwnerNames();
+			List<String> uniqueNames = new ArrayList<>(new HashSet<>(cardOwnersNames));
+			
+			if(uniqueNames.size() != 2) {
+				System.err.println("INVALID NUMBER OF PLAYERS SELECTED CARDS: " + uniqueNames.size());
+				//doesnt trigger anything, mainly for error detection.
+				sseEmitter.emitSseData(Map.of(
+					    "msg", "too-many-users",
+					    "usernames", uniqueNames.toString()
+					));
+			}
+					
+			endCardSet();
+		
+		}
+		
+		else if(ownedCards.size() > 3) {
+			//too many, end set and idk
+			System.err.println("TOO MANY CARDS WERE SELECTED");
+			endCardSet();
+			
+		}
 	}
 
+	
+	//TODO - select card doesnt look at how many cards have been selected (this is done in UI side)
 	@PostMapping("/select")
-	public String selectCard(@RequestBody Map<String, Number> body) {
-		
-		Number cardIndex = body.get("cardIndex");
-		// could be put
-		// integer? string? cardIndex from body
-		// selectCard( cardIndex, username)
-		// return 400 "Invalid card" if invalid id/already selected
+	public ResponseEntity<Map<String, Object>> selectCard(Authentication auth, @RequestBody Map<String, Integer> body) {
+		String username = auth.getName();
+		int cardIndex = body.get("cardIndex");
 
-		// emit { msg: "select", cardOwner: username, cardIndex }
-		// return 200 & card info
-
+		if (Boolean.FALSE.equals(usersRepo.isUserValid(username))) {
+			return ResponseEntity.status(400).body(Map.of("error", "INVALID USER"));
+		}
 		
-		String username = "abc"; //get requester username from jwt token/added to user info & request i think
-		
-		//this style limited to 10 entries --> this style no limit Map.ofEntries(entry("a", "b"), entry("c", "d"));
-		
-		//get card object in index --> return it
-		
+		Card selectedCard = cardsRepo.selectCard(cardIndex, username);
+		if(selectedCard == null) {
+			return ResponseEntity.status(400).body(Map.of("error", "INVALID CARD"));
+		}	
 		
 		sseEmitter.emitSseData(Map.of(
 			    "msg", "select",
@@ -136,54 +157,51 @@ public class Cards {
 			));
 		
 		checkForEnd();
-		return "todo";
+		return ResponseEntity.status(200).body(Map.of("card", selectedCard));
 	}
 
 	@GetMapping("/forceEnd")
-	public String forceEnd() {
-		// emit { msg: "forceEnd", username }
-
-		String username = "abc";
+	public ResponseEntity<String> forceEnd(Authentication auth) {
 		// end current card set (reset & store stats)
 		sseEmitter.emitSseData(Map.of(
 			    "msg", "forceEnd",
-			    "username", username
+			    "username", auth.getName()
 			));
 		
 		endCardSet();
-		// return 204
-		return "todo";
+		return ResponseEntity.status(204).body("OK");
 	}
 
 	@GetMapping("/nosword")
-	public String chooseNosword() {
-		// check requester is swordUser, if not, return 401 "You are not the sword user"
-
-		// reset card set, emit { msg: "nosword", username }
-		String username = "abc";
+	public ResponseEntity<String> chooseNosword(Authentication auth) {
+		String username = auth.getName();
+		
+		if(Boolean.FALSE.equals(usersRepo.isSwordUser(username))) {
+			return ResponseEntity.status(401).body("You are not the sword user");
+		}
+		
 		sseEmitter.emitSseData(Map.of(
-			    "msg", "select",
+			    "msg", "nosword",
 			    "username", username
 			));
 		
 		endCardSet();
-		// return 204
-		return "todo";
+		return ResponseEntity.status(204).body("OK");
 	}
 
 	@GetMapping("/initialLoad")
-	public Map<String, Object> getInitialLoad() {
-		// reset all user stats, return 204
-
-		//get sword owner from users thing
-		String swordOwner = "Hello";
+	public Map<String, Object> getInitialLoad(Authentication authentication) {
+		String username = authentication.getName();	
 		
+		Map<String, List<Card>> selectedCards = cardsRepo.getSelectedCards(username);
+		
+		List<Map<String, Object>> othersCardsCensored = selectedCards.get("othersCards").stream().map(card -> card.getCensoredCardData()).toList();
 		
 		return Map.of(
-			    "swordOwner", swordOwner,
+			    "swordOwner", usersRepo.getSwordUserName(),
 			    "selectedCards", Map.of(
-					    "ownCards", new ArrayList<>(),
-					    "othersCards", new ArrayList<>()
+					    "ownCards", selectedCards.get("ownCards"),
+					    "othersCards", othersCardsCensored
 					)
 			);
 		}
