@@ -64,10 +64,12 @@ public class Cards {
 		});
 	}
 
-	private void checkForEnd() {
+	private Boolean checkForEnd() {
 		
 		List<Card> ownedCards = cardsRepo.getCardsWithOwners();
 		String swordUser = usersRepo.getSwordUserName();
+		
+		Boolean endGame = false;
 		
 		//if less than 2 cards selected, keep playing.
 		
@@ -82,6 +84,7 @@ public class Cards {
 					));
 				
 			} else {
+				endGame = true;
 				endCardSet();
 			}
 			
@@ -100,7 +103,8 @@ public class Cards {
 					    "usernames", uniqueNames.toString()
 					));
 			}
-					
+			
+			endGame = true;
 			endCardSet();
 		
 		}
@@ -108,9 +112,11 @@ public class Cards {
 		else if(ownedCards.size() > 3) {
 			//too many, end set and idk
 			System.err.println("TOO MANY CARDS WERE SELECTED");
+			endGame = true;
 			endCardSet();
 			
 		}
+		return endGame;
 	}
 
 	
@@ -135,7 +141,7 @@ public class Cards {
 			    "cardIndex", cardIndex
 			));
 		
-		checkForEnd(); //this happens before user gets their card
+		Boolean gameEnded = checkForEnd(); //this happens before user gets their card
 		return ResponseEntity.status(200).body(Map.of("card", selectedCard));
 	}
 
