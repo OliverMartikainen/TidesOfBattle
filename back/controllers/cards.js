@@ -104,10 +104,10 @@ cardRouter.post('/select', async (req, res) => {
     }
 
     //send SSE push to others that cardIndex chosen by username
-    res.app.emit(SSE_EMMITTER, { msg: 'select', cardOwner: username, cardIndex })
-
-    //give reserved/not reserved status?? --> return selected cards info
     res.status(200).send({ card: card })
+    res.app.emit(SSE_EMMITTER, { msg: 'select', cardOwner: username, cardIndex })
+    
+    //give reserved/not reserved status?? --> return selected cards info
     checkForEnd(res.app)
 })
 
@@ -117,7 +117,7 @@ cardRouter.get('/forceEnd', async (req, res) => {
     const username = req.username
 
     res.app.emit(SSE_EMMITTER, { msg: 'forceEnd', username })
-    endCardSet(res)
+    endCardSet(res.app)
     res.status(204).send()
 })
 
