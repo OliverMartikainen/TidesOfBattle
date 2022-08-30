@@ -14,6 +14,7 @@ public class Statistic {
 		stats.put("one_tower", 0);
 		stats.put("two", 0);
 		stats.put("three", 0);
+		stats.put("zero_skull", 0);
 	}
 	
 
