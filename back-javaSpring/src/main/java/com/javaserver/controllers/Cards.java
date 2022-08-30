@@ -141,8 +141,19 @@ public class Cards {
 			    "cardIndex", cardIndex
 			));
 		
-		Boolean gameEnded = checkForEnd(); //this happens before user gets their card
-		return ResponseEntity.status(200).body(Map.of("card", selectedCard));
+		//workaround --> makes checkForEnd happen after the "select" response is sent. Better ways to implement, TODO improve?
+		new Thread(() -> {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				Thread.currentThread().interrupt();
+			}
+			checkForEnd();
+		}).start();
+		
+
+		return ResponseEntity.status(200).body(Map.of("card", selectedCard));			
 	}
 
 	@GetMapping("/forceEnd")
