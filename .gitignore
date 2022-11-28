@@ -2,6 +2,7 @@
 
 # FRONT SPECIFIC
 front/build
+front/node
 
 #JAVA_BACK SPECIFIC
 application.properties
@@ -28,3 +29,4 @@ application.properties
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/.metadata/
