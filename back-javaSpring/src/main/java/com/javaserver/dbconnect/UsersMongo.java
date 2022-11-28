@@ -12,7 +12,7 @@ import com.javaserver.repository.UsersMongoRepository;
 public class UsersMongo implements UsersInterface {
 
 	@Autowired
-	private UsersMongoRepository usersRepo;
+	private static UsersMongoRepository usersRepo;
 
 	@Override
 	public List<User> getUsers() {
