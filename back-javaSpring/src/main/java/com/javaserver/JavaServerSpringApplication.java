@@ -21,7 +21,7 @@ public class JavaServerSpringApplication {
 		SpringApplication.run(JavaServerSpringApplication.class, args);
 		
 		ResourceLoader resourceLoader = new DefaultResourceLoader();
-		Resource resource = resourceLoader.getResource("classpath:static/index.html");
+		Resource resource = resourceLoader.getResource("classpath:/static/index.html");
 		try {
 			System.out.println(resource.exists() + " " + resource.toString());
 			System.out.println(resource.getURL());

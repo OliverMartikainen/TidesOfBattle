@@ -70,7 +70,7 @@
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>${frontend-maven-plugin.version}</version>
 				<configuration>
-					<workingDirectory>${basedir}/../front</workingDirectory>
+					<workingDirectory>${basedir}/react</workingDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -115,10 +115,10 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/src/main/resources/static</outputDirectory>
+							<outputDirectory>${basedir}/target/classes/static</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/../front/build</directory>
+									<directory>${basedir}/react/build</directory>
 								</resource>
 							</resources>
 						</configuration>
@@ -126,6 +126,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+		
 	</build>
 
 </project>
