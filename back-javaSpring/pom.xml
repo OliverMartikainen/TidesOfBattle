@@ -109,21 +109,6 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<id> resources</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>resources</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<directory>${basedir}/react/build</directory>
-									<targetPath>${basedir}/target/classes/static</targetPath>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
 						<id>resources223</id>
 						<phase>generate-resources</phase>
 						<goals>
