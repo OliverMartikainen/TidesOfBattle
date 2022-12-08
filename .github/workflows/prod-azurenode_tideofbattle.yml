@@ -36,7 +36,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: tide-node-app
+          name: node-app
           path: back/
 
   deploy:
@@ -59,4 +59,4 @@ jobs:
           app-name: 'TideOfBattle'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E9C28E050B7140D5BCF8C82A352D703B }}
-          package: ./back
+          package: .
