@@ -21,12 +21,23 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: npm install, build, and test
+      - name: front -npm install, build, and test
         run: |
           npm install
-          npm run build --if-present
-          npm run test --if-present
+          npm run build --prod
+        working-directory: front
+
+      - name: back - npm install, build, and test
+        run: |
+          npm install
+          npm run build:get
         working-directory: back
+
+      - name: move react build files
+        script: |
+
+        workingDirectory: '$(build.sourcesdirectory)'
+        displayName: 'Command Line Script'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
