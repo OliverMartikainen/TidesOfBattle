@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:get": "cp -r ../front/build /build",
+    "build:get": "cp -r ../front/build ./",
     "build:ui": "rm -rf build && cd ../TidesOfBattle_Front && npm run build --prod && cp -r build ../TidesOfBattle/",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
