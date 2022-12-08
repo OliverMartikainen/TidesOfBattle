@@ -39,13 +39,13 @@ jobs:
 
       - name: back - compress for upload
         run: |
-          tar -zcvf ${{ variables.uploadArtifact }} /back
+          tar -zcvf ${uploadArtifact} /back
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: ${{ variables.uploadArtifact }}
+          path: ${uploadArtifact}
 
   deploy:
     runs-on: ubuntu-latest
@@ -62,7 +62,7 @@ jobs:
 
       - name: back - uncompress download
         run: |
-          tar -zxvf ${{ variables.uploadArtifact }}
+          tar -zxvf ${uploadArtifact}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
