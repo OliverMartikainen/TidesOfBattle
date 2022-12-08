@@ -25,6 +25,8 @@ jobs:
         run: |
           npm install
           npm run build --prod
+        script: |
+          cp -r build ..back/build
         working-directory: front
 
       - name: back - npm install, move build folder
