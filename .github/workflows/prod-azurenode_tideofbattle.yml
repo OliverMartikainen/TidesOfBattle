@@ -3,8 +3,7 @@
 
 name: Build and deploy Node.js app to Azure Web App - TideOfBattle
 
-variables:
-  uploadArtifact: backCompressed.tar.gz
+
 
 
 on:
@@ -13,6 +12,10 @@ on:
       - prod-azureNode
   workflow_dispatch:
 
+variables:
+  uploadArtifact: backCompressed.tar.gz
+
+  
 jobs:
   build:
     runs-on: ubuntu-latest
