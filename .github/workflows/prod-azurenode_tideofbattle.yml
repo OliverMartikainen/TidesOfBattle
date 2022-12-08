@@ -24,21 +24,21 @@ jobs:
         with:
           node-version: '18.x'
 
-      #- name: front -npm install, build
-       # run: |
-        #  npm install
-         # npm run build --prod
-        #working-directory: front
+      - name: front -npm install, build
+        run: |
+          npm install
+          npm run build --prod
+        working-directory: front
 
-    #  - name: back - npm install, move build folder
-     #   run: |
-      #    npm install --omit=dev
-       #   npm run build:get
-        #working-directory: back
+      - name: back - npm install, move build folder
+        run: |
+          npm install --omit=dev
+          npm run build:get
+        working-directory: back
 
       - name: back - compress for upload
         run: |
-          tar -zcvf backCompressed.tar.gz back
+          tar -zcf backCompressed.tar.gz back
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -61,7 +61,7 @@ jobs:
 
       - name: back - uncompress download
         run: |
-          tar -zxvf backCompressed.tar.gz
+          tar -zxf backCompressed.tar.gz
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
