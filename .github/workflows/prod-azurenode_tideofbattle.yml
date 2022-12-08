@@ -33,12 +33,6 @@ jobs:
           npm run build:get
         working-directory: back
 
-      - name: move react build files
-        script: |
-
-        workingDirectory: '$(build.sourcesdirectory)'
-        displayName: 'Command Line Script'
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
