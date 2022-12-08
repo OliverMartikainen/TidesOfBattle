@@ -9,7 +9,6 @@ public class Statistic {
 	
 	Statistic() {
 		stats.put("zero", 0);
-		stats.put("zero_skill", 0);
 		stats.put("one_sword", 0);
 		stats.put("one_tower", 0);
 		stats.put("two", 0);
