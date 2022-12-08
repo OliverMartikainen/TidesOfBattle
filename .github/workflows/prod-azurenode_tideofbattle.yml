@@ -71,4 +71,4 @@ jobs:
           app-name: 'TideOfBattle'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E9C28E050B7140D5BCF8C82A352D703B }}
-          package: .
+          package: ./back
