@@ -1,16 +1,14 @@
 require('dotenv').config()
 
-const MONGO_USER = process.env.MONGO_USER
-const MONGO_PASS = process.env.MONGO_PASS
-const MONGO_ADDRESS = process.env.MONGO_ADDRESS
-const MONGO_URI = `mongodb+srv://${MONGO_USER}:${MONGO_PASS}@${MONGO_ADDRESS}`
+const { MONGO_USER, MONGO_PASS, MONGO_ADDRESS, MONGO_DB_NAME } = process.env
+const MONGO_URI = `mongodb+srv://${MONGO_USER}:${MONGO_PASS}@${MONGO_ADDRESS}/${MONGO_DB_NAME}?retryWrites=true&w=majority`
 
 const SSE_EMMITTER = 'TIDE_SSE'
-
-const TOKEN_SECRET=process.env.TOKEN_SECRET
+console.log(MONGO_URI)
+const TOKEN_SECRET = process.env.TOKEN_SECRET
 
 module.exports = {
     MONGO_URI,
     SSE_EMMITTER,
-    TOKEN_SECRET
+    TOKEN_SECRET,
 }
