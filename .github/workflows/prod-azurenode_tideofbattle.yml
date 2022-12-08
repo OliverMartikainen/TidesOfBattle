@@ -3,6 +3,11 @@
 
 name: Build and deploy Node.js app to Azure Web App - TideOfBattle
 
+variables:
+- name: uploadArtifact
+  value: backCompressed.tar.gz
+
+
 on:
   push:
     branches:
@@ -33,11 +38,15 @@ jobs:
           npm run build:get
         working-directory: back
 
+      - name: back - compress for upload
+        run: |
+          tar -zcvf ${{ variables.uploadArtifact }} /back
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: back/
+          path: ${{ variables.uploadArtifact }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,6 +60,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: node-app
+
+      - name: back - uncompress download
+        run: |
+          tar -zxvf ${{ variables.uploadArtifact }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp

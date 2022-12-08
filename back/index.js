@@ -10,7 +10,6 @@ const app = express()
 
 const cardsRouter = require('./controllers/cards')
 const usersRouter = require('./controllers/users')
-const { getUsers } = require('./cache/users')
 
 const shouldCompress = (req, res) => {
     if (req.headers['x-no-compression']) {
@@ -26,7 +25,6 @@ const connectDb = async () => {
     try {
         await mongoose.connect(MONGO_URI)
         console.log('MONGO_DB CONNECTED')
-        console.log(await getUsers())
     } catch (error) {
         console.error(error)
     }
