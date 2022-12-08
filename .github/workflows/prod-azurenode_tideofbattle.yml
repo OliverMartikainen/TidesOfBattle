@@ -61,7 +61,7 @@ jobs:
 
       - name: back - uncompress download
         run: |
-          tar -zxf backCompressed.tar.gz
+          tar -zxf backCompressed.tar.gz back
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -70,4 +70,4 @@ jobs:
           app-name: 'TideOfBattle'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E9C28E050B7140D5BCF8C82A352D703B }}
-          package: .
+          package: /back
