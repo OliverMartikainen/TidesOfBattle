@@ -29,15 +29,15 @@ jobs:
 
       - name: back - npm install, move build folder
         run: |
-          npm install
+          npm install --omit=dev
           npm run build:get
         working-directory: back
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: node-app
-          path: .
+          name: tide-node-app
+          path: back/
 
   deploy:
     runs-on: ubuntu-latest
