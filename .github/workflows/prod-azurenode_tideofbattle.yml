@@ -21,13 +21,13 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: front -npm install, build, and test
+      - name: front -npm install, build
         run: |
           npm install
           npm run build --prod
         working-directory: front
 
-      - name: back - npm install, build, and test
+      - name: back - npm install, move build folder
         run: |
           npm install
           npm run build:get
