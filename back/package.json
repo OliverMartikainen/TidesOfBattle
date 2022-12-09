@@ -6,6 +6,7 @@
   "scripts": {
     "build:get": "cp -r ../front/build ./",
     "build:ui": "rm -rf build && cd ../TidesOfBattle_Front && npm run build --prod && cp -r build ../TidesOfBattle/",
+    "build:ui-win": "rmdir /s /q build & cd ../front && npm run build --omit=dev && robocopy /s build ..\\back\\build",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "nodemon index.js"

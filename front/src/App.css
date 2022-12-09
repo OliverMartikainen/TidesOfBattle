@@ -6,44 +6,6 @@
   height: 40vmin;
   pointer-events: none;
 }
-.tidecard-wrap {
-  min-width: 170px;
-  min-height: 230px;
-  padding: 5px;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-bottom: 2px solid black;
-  border-top: 2px solid black;
-}
-
-.tidecard-small {
-  min-width: 170px;
-  min-height: 230px;
-  width: 100px;
-  height: 160px;
-  padding: 5px;
-  border-right: 1px solid black;
-  border-left: 1px solid black;
-  border-bottom: 2px solid black;
-  border-top: 2px solid black;
-}
-
-.tidecard {
-  width: 100%;
-  height: 90%;
-}
-
-.divider {
-  height: 240px;
-  background-color: black;
-  width: 3px;
-  margin: 2px;
-}
-
-.player-cards-holder {
-  display: flex;
-  overflow: auto;
-}
 
 .stats {
   display: flex;

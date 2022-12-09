@@ -1,2 +1,2 @@
 GET http://localhost:3001/api/users/resetStats
-Authorization: bearer eyJhbGciOiJIUzI1NiJ9.T2xpdmVyTQ.UBiSR6mamp6BzE_NWKsfxx1heza2sHdcoesmdQ_frKg
+Authorization: bearer eyJhbGciOiJIUzI1NiJ9.RGV1eA.GkuyHFysqsjhTjzQita4-OfJ-7X8BKQPn_E_QnFBcgM

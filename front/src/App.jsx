@@ -4,6 +4,7 @@ import NativeSelector from 'components/NativeSelector'
 import usersService from 'services/users'
 import './App.css'
 
+import { activateSound } from 'components/mlgAudio'
 import tokenManager from 'services/tokenManager'
 
 const saveUser = (username, token) => {
@@ -132,6 +133,7 @@ const StatsDisplay = () => {
 
 const App = () => {
     const [username, setUsername] = useState(() => getDefaultUser())
+    const [audioActivated, setAudioActivated] = useState(false)
     const [usernameOptions, setUsernameOptions] = useState([])
 
 
@@ -151,6 +153,19 @@ const App = () => {
         )
     }
 
+    const handleActivateAudio = () => {
+        activateSound()
+        setAudioActivated(true)
+    }
+
+    if (!audioActivated) {
+        return (
+            <div className='App'>
+                <button onClick={handleActivateAudio}>PRESS TO ACTIVATE AUDIO</button>
+            </div>
+        )
+    }
+
     const logout = () => {
         localStorage.clear()
         setUsername('')
@@ -164,11 +179,7 @@ const App = () => {
 
     return (
         <div className='App'>
-            { usernameOptions.length > 0 ? //wait till username options are fetched
-                <TideCards logout={ logout } username={ username } usernameOptions={ usernameOptions } />
-                :
-                'Loading...'
-            }
+            <TideCards logout={ logout } username={ username } usernameOptions={ usernameOptions } />
             <button onClick={ forceFakeRefresh }>FAKE REFRESH</button>
             <StatsDisplay />
         </div>

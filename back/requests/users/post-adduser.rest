@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/users/
+POST http://localhost:3001/api/users/add
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiJ9.T2xpdmVyTQ.4fIWE_1q69-3Aptytr0pdqNS8vVD1cCksoUw0hR0TWU
+Authorization: bearer eyJhbGciOiJIUzI1NiJ9.RGV1eA.GkuyHFysqsjhTjzQita4-OfJ-7X8BKQPn_E_QnFBcgM
 
 {
-    "username": "OliverM"
+    "username": "OBSERVER"
 }
