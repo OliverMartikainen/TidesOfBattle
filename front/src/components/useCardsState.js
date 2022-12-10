@@ -4,6 +4,10 @@ import cardsService from 'services/cards'
 /**
  * @typedef {import('./types').cardsState} cardsState
  */
+const sortCards = (cards) => cards.sort(
+    (c1, c2) => c1.cardSelectTime - c2.cardSelectTime
+)
+
 
 // --> improve game end/ new session start 
 //--> store end result in other property, 
@@ -18,21 +22,17 @@ const sseMsgActions = (data, setCardsState) => {
                 setCardsState(state => {
                     const { cards } = msgObj
                     const { username } = state
-                    const othersCards = cards.filter(c => c.cardOwner !== '' && c.cardOwner !== username)
-                    const ownCards = cards.filter(c => c.cardOwner === username)
-                    let ownLastCard = ''
-                    if (ownLastCard.length > 0) {
-                        ownLastCard = ownCards[ownCards.length - 1].cardName
-                    }
 
+                    const othersCardsUnsorted = cards.filter(c => !!c.cardOwner && c.cardOwner !== username)
+                    const ownCardsUnsorted = cards.filter(c => c.cardOwner === username)
+  
                     return {
                         ...state,
                         waitingForSword: '',
                         endState: {
                             cards,
-                            othersCards,
-                            ownCards: state.ownCards,
-                            ownLastCard
+                            othersCards: sortCards(othersCardsUnsorted),
+                            ownCards: sortCards(ownCardsUnsorted),
                         },
                         cards: cardsArray(), //reset for new game --> keep endState visible
                         othersCards: [],

@@ -34,6 +34,29 @@ const createCardComps = (cards, username) => cards.map((card, index) => <TideCar
     isPrimary={cards.length === (index+1)} //if last card --> priority card (sorted with high priority last)
 />)
 
+const sortCards = (cards) => cards.sort(
+    (c1, c2) => c1.cardSelectTime - c2.cardSelectTime
+)
+
+/** return sorted arrs in object with name as index */
+const createOtherPlayersCardsIndex = (othersCards) => {
+    const otherPlayerNamesList = Object.keys(
+        othersCards.reduce((obj, card) => {
+            obj[card.cardOwner] = card.cardOwner
+            return obj
+        }, {})
+    )
+
+    const otherPlayersCards = otherPlayerNamesList.reduce((obj, player) => {
+        const playerCards = othersCards.filter((c) => c.cardOwner === player)
+
+        const playerCardsOrdered = sortCards(playerCards)
+
+        obj[player] = { cards: playerCardsOrdered, playerName: player }
+        return obj
+    }, {})
+    return otherPlayersCards
+}
 
 const TideCards = ({ username, usernameOptions, logout }) => {
     const [cardStates, cardStateActions] = useCardsState(
@@ -56,23 +79,8 @@ const TideCards = ({ username, usernameOptions, logout }) => {
         ? cardStates.endState
         : cardStates
 
-    const otherPlayerNamesIndex = Object.keys(
-        othersCards.reduce((obj, card) => {
-            obj[card.cardOwner] = card.cardOwner
-            return obj
-        }, {})
-    )
 
-    const otherPlayersCards = otherPlayerNamesIndex.reduce((obj, player) => {
-        const playerCards = othersCards.filter((c) => c.cardOwner === player)
-
-        const playerCardsOrdered = [...playerCards].sort(
-            (c1, c2) => c1.cardSelectTime - c2.cardSelectTime
-        )
-
-        obj[player] = { cards: playerCardsOrdered, playerName: player }
-        return obj
-    }, {})
+    const otherPlayersCards = createOtherPlayersCardsIndex(othersCards)
 
     const allCardComps = cards.map((card) => <TideCard
         key={card.cardIndex}
@@ -96,7 +104,7 @@ const TideCards = ({ username, usernameOptions, logout }) => {
         )
     })
 
-    
+
     let isSwordBtnEnabled = false
     if (IS_SWORD_OWNER) {
     //check if 2 cards are selected and 1 is yours
@@ -107,29 +115,47 @@ const TideCards = ({ username, usernameOptions, logout }) => {
             isSwordBtnEnabled = true
         }
     }
-
     if (cardStates.endState && !cardStates.soundPlayed) {
-        const frozenOwnCards = cardStates.endState?.ownCards || []
+        let shouldPlaySound = false
 
-        console.log(cardStates)
-        //if (frozenOwnCards.length > 0 || cardStates.endState?.)
-        if (frozenOwnCards.length > 0) {
-            const lastOwnName = frozenOwnCards[frozenOwnCards.length - 1].cardName
-            if (lastOwnName === 'zero_skull') {
-                playSound()
-                setSoundPlayed()
+        if(username === 'OBSERVER') {
+            //play if either player has skull as last
+            const endOthersCards = cardStates.endState?.othersCards
+            const otherPlayersCards = createOtherPlayersCardsIndex(endOthersCards)
+
+            //i think i can assume its in correct order?
+            const values = Object.values(otherPlayersCards)
+            values.forEach(playerInfo => {
+                const cards = playerInfo.cards
+                console.log(cards[cards.length - 1]?.cardName === 'zero_skull')
+                if(cards[cards.length - 1]?.cardName === 'zero_skull') {
+                    shouldPlaySound = true
+                }
+            })
+        } else {
+            console.log(cardStates) 
+
+            //only play for own cards if not OBSERVER
+            const frozenOwnCards = cardStates.endState?.ownCards || []
+            frozenOwnCards
+            //if (frozenOwnCards.length > 0 || cardStates.endState?.)
+            if (frozenOwnCards?.[frozenOwnCards.length - 1]?.cardName === 'zero_skull') {
+                shouldPlaySound = true
             }
+        }
+        
+        if(shouldPlaySound) {
+            playSound()
+            setSoundPlayed()
         }
     }
 
     return (
         <div>
             <div className="control-buttons">
-                <button onClick={logout}>Logout - {username}</button>
+                <button disabled={!IS_FRONZEN_STATE} onClick={refresh}>REFRESH</button>
                 <SwordUserSelector cardStates={cardStates} />
-                <button disabled={!IS_FRONZEN_STATE} onClick={refresh}>
-                    REFRESH
-                </button>
+                <button onClick={logout}>Logout - {username}</button>
             </div>
             <div style={{ display: 'grid' }}>
                 <div className="player-cards-holder">{allCardComps}</div>
