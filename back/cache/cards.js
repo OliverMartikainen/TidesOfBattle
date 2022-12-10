@@ -1,5 +1,11 @@
 const Card = require('../models/card')
 
+const createNewCard = (cardName, index) => ({
+    cardName: cardName,
+    cardIndex: index,
+    cardOwner: '',
+    cardSelectTime: 0
+})
 
 const TIDE_CARDS_DATA = {
     'zero': { count: 8, name: 'zero' },
@@ -38,7 +44,7 @@ const initCards = async () => {
     //remove previous entries
     await Card.deleteMany({})
 
-    const mixedCards = cardMixer().map((card, index) => ({ cardName: card, cardIndex: index, cardOwner: '' }))
+    const mixedCards = cardMixer().map((card, index) => (createNewCard(card, index)))
     try {
         await Card.insertMany(mixedCards)
         return true
@@ -47,10 +53,9 @@ const initCards = async () => {
     }
 }
 
-
 const selectCard = async (index, owner) => {
     //new: true --> returns the updated card --> returns truth value only if given index is not selected by anyone
-    const card = await Card.findOneAndUpdate({ cardIndex: index, cardOwner: '' }, { cardOwner: owner }, { new: true })
+    const card = await Card.findOneAndUpdate({ cardIndex: index, cardOwner: '' }, { cardOwner: owner, cardSelectTime: Date.now() }, { new: true })
     if (!card) return null
 
     return card.toJSON()
@@ -70,6 +75,7 @@ const getSelectedCards = async (username) => {
     if (selectedCards.length === 0) return { ownCards: [], othersCards: [] }
 
     const ownCards = selectedCards.filter(c => c.cardOwner === username)
+    //censor other people's cards
     const othersCards = selectedCards.filter(c => c.cardOwner !== username).map(c => ({
         ...c,
         cardName: ''

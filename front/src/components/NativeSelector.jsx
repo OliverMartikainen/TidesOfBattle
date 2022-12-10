@@ -1,7 +1,7 @@
 
 import { InputLabel, FormControl, NativeSelect } from '@mui/material'
 
-const formControlStyle = { margin: '2rem', minWidth: 120, color: 'white', backgroundColor: 'white' }
+const formControlStyle = { margin: '10px', minWidth: 120, color: 'black', backgroundColor: 'white' }
 
 const NativeSelector = ({ value, valueOptions, label, handleChange, disabled = false }) => {
 

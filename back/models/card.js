@@ -4,6 +4,7 @@ const cardSchema = new mongoose.Schema({
     cardName: String,
     cardIndex: Number,
     cardOwner: String,
+    cardSelectTime: Number
 })
 
 cardSchema.set('toJSON', {

@@ -19,7 +19,7 @@ const sseMsgActions = (data, setCardsState) => {
                     const { cards } = msgObj
                     const { username } = state
                     const othersCards = cards.filter(c => c.cardOwner !== '' && c.cardOwner !== username)
-                    const ownCards = state.ownCards
+                    const ownCards = cards.filter(c => c.cardOwner === username)
                     let ownLastCard = ''
                     if (ownLastCard.length > 0) {
                         ownLastCard = ownCards[ownCards.length - 1].cardName
@@ -32,13 +32,11 @@ const sseMsgActions = (data, setCardsState) => {
                             cards,
                             othersCards,
                             ownCards: state.ownCards,
-                            selectOrder: { ...state.selectOrder },
                             ownLastCard
                         },
                         cards: cardsArray(), //reset for new game --> keep endState visible
                         othersCards: [],
                         ownCards: [],
-                        selectOrder: {},
                         soundPlayed: false
                     }
                 })
@@ -56,14 +54,12 @@ const sseMsgActions = (data, setCardsState) => {
                 setCardsState(state => {
                     const { cardIndex, cardOwner } = msgObj
                     state.cards[cardIndex].cardOwner = cardOwner
-                    if (!state.selectOrder[cardOwner]) {
-                        state.selectOrder[cardOwner] = []
+    
+                    if (state.username === 'OBSERVER' && !!state.endState) {
+                        state.endState = null
                     }
-                    const playerOrderNew = [...state.selectOrder[cardOwner], cardIndex]
-
-                    const selectOrderNew = { ...state.selectOrder, [cardOwner]: playerOrderNew }
-
-                    return { ...state, selectOrder: selectOrderNew }
+             
+                    return { ...state }
                 })
                 //use this to fill the cards array --> ownCards & othersCards to display on bottom side seperate
                 return
@@ -78,7 +74,6 @@ const sseMsgActions = (data, setCardsState) => {
                         cards: cardsArray(), //reset for new game --> keep endState visible
                         othersCards: [],
                         ownCards: [],
-                        selectOrder: {},
                         soundPlayed: false
                     }
                 })
@@ -115,6 +110,36 @@ const sseMsgActions = (data, setCardsState) => {
     }
 }
 
+/**
+ * Fetches current card states from db & updates view
+ * Use on reloads/if sse connection is lost and reconnected
+ * @param { React.Dispatch<React.SetStateAction<*>> } setCardsState card state
+ */
+const initThing = async (setCardsState) => {
+    console.log('INIT')
+    const data = await cardsService.initialLoad()
+    const { swordOwner, ownCards, othersCards } = data
+    const selectedCards = [...ownCards, ...othersCards]
+
+    setCardsState(oldState => {
+        const cards = oldState.cards
+        selectedCards.forEach(c => {
+            const { cardOwner, cardIndex } = c
+            cards[cardIndex].cardOwner = cardOwner
+        })
+
+        return {
+            ...oldState,
+            cards,
+            swordOwner,
+            ownCards,
+            othersCards,
+            endState: oldState.endState
+        }
+    })
+}
+
+
 let CARD_SUB = null
 let CARD_SUB_TIMEOUT = null
 
@@ -127,6 +152,7 @@ const CardSubHandler = (setCardsState) => {
     }
 
     const cardSub = cardsService.cardsSSE()
+    console.log('cardsubhandler run')
     initThing(setCardsState)
 
     cardSub.onopen = () => {
@@ -144,33 +170,6 @@ const CardSubHandler = (setCardsState) => {
         sseMsgActions(event.data, setCardsState)
     }
     CARD_SUB = cardSub
-}
-
-/**
- * Fetches current card states from db & updates view
- * Use on reloads/if sse connection is lost and reconnected
- * @param { React.Dispatch<React.SetStateAction<*>> } setCardsState card state
- */
-const initThing = async (setCardsState) => {
-    const data = await cardsService.initialLoad()
-    const { swordOwner, ownCards, othersCards } = data
-    const selectedCards = [...ownCards, ...othersCards]
-
-    setCardsState(state => {
-        const cards = state.cards
-        selectedCards.forEach(c => {
-            const { cardOwner, cardIndex } = c
-            cards[cardIndex].cardOwner = cardOwner
-        })
-        return {
-            ...state,
-            cards,
-            swordOwner,
-            ownCards,
-            othersCards,
-            endState: null
-        }
-    })
 }
 
 const cardsArray = () => {
@@ -191,19 +190,26 @@ const defaultState = (username, usernameOptions) => ({
     swordOwner: '',
     usernameOptions: usernameOptions,
     username: username,
-    selectOrder: {},
     endState: null,
     soundPlayed: false
 })
 
 /**
+ * Should refactor to useReducer style custom hook --> but its late in the night and game starts in less than 12h
  * @param {String} username
  * @param {Array<String>} usernameOptions
- * @returns {[cardsState, Function]}
+ * @returns {[cardsState, { 
+ *  handleCardSelect: (cardIndex: Number) => void, 
+ *  refresh: () => void, 
+ *  handleSwordSkip: () => void,
+ *  forceReset: () => void,
+ *  setSoundPlayed: () => void
+ * }]}
  */
 const useCardsState = (username, usernameOptions) => {
     const [cardsState, setCardsState] = useState(() => defaultState(username, usernameOptions))
 
+    const isFrozeState = !!cardsState.endState
 
     useEffect(() => {
         CardSubHandler(setCardsState)
@@ -218,7 +224,64 @@ const useCardsState = (username, usernameOptions) => {
         }
     }, [])
 
-    return [cardsState, setCardsState]
+    const handleCardSelect = async (cardIndex) => {
+        const { username, swordOwner, cards } = cardsState
+
+        if (isFrozeState) return
+
+        const card = cards[cardIndex]
+        if (card.cardOwner !== '') return //should prevent selecting alreadt selected card --> check done in backend too
+
+        //the rest of the picks are not preventend in backend atm.
+
+        //check if non swordowner tries to pick a 2nd
+        const selectedCards = cards.filter(c => c.cardOwner !== '')
+        const ownCardsFiltered = selectedCards.filter(c => c.cardOwner === username)
+        //0 selected --> no checks
+
+        //1 selected --> prevent if its yours
+        if (selectedCards.length === 1 && ownCardsFiltered.length === 1) return
+
+        //2 selected --> prevent from picking unless you are one of the 2 and have sword
+        if ((selectedCards.length === 2) && (ownCardsFiltered.length !== 1 || swordOwner !== username)) return
+
+        const cardInfo = await cardsService.select(cardIndex)
+        if (!cardInfo) return //should mean card is already selected by someone
+
+        setCardsState(state => ({
+            ...state,
+            ownCards: [...state.ownCards, cardInfo]
+        }))
+    }
+
+    const refresh = () => {
+        setCardsState(state => ({ ...state, endState: null }))
+    }
+
+    const handleSwordSkip = async () => {
+        if (isFrozeState) return
+
+        if ((cardsState.swordOwner !== username)) return
+        await cardsService.nosword()
+    }
+
+    const forceReset = async () => {
+        if (isFrozeState) return
+
+        await cardsService.forceEnd()
+    }
+
+    const setSoundPlayed = () => {
+        setCardsState(state => ({ ...state, soundPlayed: true }))
+    }
+
+    return [cardsState, { 
+        handleCardSelect,
+        refresh,
+        handleSwordSkip,
+        forceReset,
+        setSoundPlayed
+    }]
 }
 
 export default useCardsState

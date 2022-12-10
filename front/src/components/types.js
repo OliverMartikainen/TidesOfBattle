@@ -13,7 +13,6 @@
 *  swordOwner: String,
 *  usernameOptions: Array<String>,
 *  username: String,
-*  selectOrder: *,
 *  endState: *,
 *  soundPlayed: Boolean
 * }} cardsState
