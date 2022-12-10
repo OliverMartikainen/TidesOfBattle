@@ -1,12 +1,14 @@
   
   .tidecard {
     min-width: 170px;
-    min-height: 230px;
+    min-height: 210px;
     width: 100px;
     height: 160px;
-  }
 
-  .card-borders {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+
     border-right: 1px solid black;
     border-left: 1px solid black;
     border-bottom: 2px solid black;

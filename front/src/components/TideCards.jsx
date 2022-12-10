@@ -41,7 +41,8 @@ const TideCards = ({ username, usernameOptions, logout }) => {
         usernameOptions
     )
 
-    const isFrozeState = !!cardStates.endState
+    const IS_FRONZEN_STATE = !!cardStates.endState
+    const IS_SWORD_OWNER = cardStates.swordOwner === username
 
     const {
         handleCardSelect,
@@ -73,14 +74,12 @@ const TideCards = ({ username, usernameOptions, logout }) => {
         return obj
     }, {})
 
-    const allCardComps = cards.map((card) => (
-        <TideCard
-            key={card.cardIndex}
-            username={username}
-            card={card}
-            handleSelect={handleCardSelect}
-        />
-    ))
+    const allCardComps = cards.map((card) => <TideCard
+        key={card.cardIndex}
+        username={username}
+        card={card}
+        handleSelect={handleCardSelect}
+    />)
 
     const ownCardComps = createCardComps(ownCards, username)
 
@@ -97,10 +96,9 @@ const TideCards = ({ username, usernameOptions, logout }) => {
         )
     })
 
-    const isSwordOwner = cardStates.swordOwner === username
-
+    
     let isSwordBtnEnabled = false
-    if (isSwordOwner) {
+    if (IS_SWORD_OWNER) {
     //check if 2 cards are selected and 1 is yours
     //--> waiting for you to decide if you use the sword or not
         const selectedCards = cardStates.cards.filter((c) => c.cardOwner !== '')
@@ -129,14 +127,14 @@ const TideCards = ({ username, usernameOptions, logout }) => {
             <div className="control-buttons">
                 <button onClick={logout}>Logout - {username}</button>
                 <SwordUserSelector cardStates={cardStates} />
-                <button disabled={!isFrozeState} onClick={refresh}>
+                <button disabled={!IS_FRONZEN_STATE} onClick={refresh}>
                     REFRESH
                 </button>
             </div>
             <div style={{ display: 'grid' }}>
                 <div className="player-cards-holder">{allCardComps}</div>
                 <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                    {isSwordOwner && (
+                    {IS_SWORD_OWNER && (
                         <button disabled={!isSwordBtnEnabled} onClick={handleSwordSkip}>
                             DONT USE SWORD
                         </button>
@@ -152,7 +150,7 @@ const TideCards = ({ username, usernameOptions, logout }) => {
                 <div style={{ height: 40 }}></div>
             </div>
             <div style={{ paddingTop: '5px', paddingBottom: '15px' }}>
-                {isSwordOwner && (
+                {IS_SWORD_OWNER && (
                     <button onClick={forceReset}>FORCE RESET - FOR BUGS ONLY</button>
                 )}
             </div>

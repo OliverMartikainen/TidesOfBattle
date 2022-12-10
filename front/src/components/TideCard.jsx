@@ -20,27 +20,27 @@ const TIDE_CARDS_DATA = {
     'backside': <img className={IMG_CLASSNAME} src={backside} alt={'backside'} />,
 }
 
-const TideCard = ({ card, username, isPrimary, handleSelect = null}) => {
+const TideCard = ({ card, username, isPrimary = null, handleSelect = null}) => {
     const { cardName, cardOwner, cardIndex } = card
     const cardCompName = cardName || 'backside'
 
     const imgComp = TIDE_CARDS_DATA[cardCompName]
 
-    const ownerClass = !cardOwner ? null : ((cardOwner === username) ? 'own' : 'others')
+    const ownerClass = !cardOwner ? '' : ((cardOwner === username) ? 'own' : 'others')
 
     //isPrimary --> higher priority card for this user (selected after this card -- >should only apply to swordholder)
-    //isPrimary can be false/true/undefined --> i know...
-    const priorityClass = (isPrimary || isPrimary === undefined) ? null : 'secundo'
+    //isPrimary can be false/true/null --> i know...
+    const priorityClass = (isPrimary || isPrimary === null) ? '' : 'secundo'
 
     const prioText = isPrimary === true ? ' !' : null
 
     return (
         <div
-            className={`tidecard ${ownerClass} ${priorityClass} card-borders`}
+            className={`tidecard ${ownerClass} ${priorityClass}`}
             onDoubleClick={() => handleSelect(cardIndex)}
         >
-            {imgComp}
             {cardOwner}{prioText}
+            {imgComp}
         </div>
     )
 }
