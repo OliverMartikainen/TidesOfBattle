@@ -9,7 +9,8 @@ application.properties
 *.properties
 
 # dependencies
-*/node_modules
+**/node_modules
+**/react/node
 */.pnp
 .pnp.js
 
